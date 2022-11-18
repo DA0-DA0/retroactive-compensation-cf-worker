@@ -1,11 +1,13 @@
 {
-  "name": "cloudflare-worker-cosmos-auth",
+  "name": "retroactive-compensation-cf-worker",
   "version": "0.0.1",
   "devDependencies": {
     "@cloudflare/workers-types": "^3.18.0",
     "@types/crypto-js": "^4.1.1",
+    "@types/lodash.groupby": "^4.6.7",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
+    "better-sqlite3": "^7.6.2",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -16,14 +18,18 @@
   "private": true,
   "scripts": {
     "start": "wrangler dev",
-    "deploy": "wrangler publish"
+    "deploy": "wrangler publish",
+    "dev": "wrangler dev --local --persist",
+    "reset-local-db": "wrangler d1 execute DB --local --file=./schema.sql"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.29.4",
+    "@cosmjs/cosmwasm-stargate": "^0.29.4",
     "@cosmjs/crypto": "^0.29.4",
     "@cosmjs/encoding": "^0.29.4",
     "crypto-js": "^4.1.1",
     "itty-cors": "^0.3.4",
-    "itty-router": "^2.6.6"
+    "itty-router": "^2.6.6",
+    "lodash.groupby": "^4.6.0"
   }
 }

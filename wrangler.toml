@@ -1,8 +1,13 @@
-name = "cloudflare-worker-cosmos-auth"
+name = "retroactive-compensation-cf-worker"
 main = "src/index.ts"
 compatibility_date = "2022-11-16"
 node_compat = true
 
 kv_namespaces = [
-  { binding = "NONCES", id = "f68fbe33b7b44ad09bed1c29e7186f12", preview_id = "9817484e78b14c3385cb6483695f210f" }
+  { binding = "NONCES", id = "6043a64154894eeb915f81a325fb6855", preview_id = "fa01301abf3c49f2bacd1407632b82ef" }
 ]
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "DB"
+database_id = "8d08204a-0f10-4853-b567-7b985e5a96dc"

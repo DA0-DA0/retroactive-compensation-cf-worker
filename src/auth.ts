@@ -4,7 +4,11 @@ import {
   verifySecp256k1Signature,
 } from './crypto'
 import { AuthorizedRequest, Env, RequestBody } from './types'
-import { objectMatchesStructure, respondError } from './utils'
+import {
+  isWalletMemberOfDaoAtBlockHeight,
+  objectMatchesStructure,
+  respondError,
+} from './utils'
 
 // Get nonce for publicKey.
 export const getNonce = async (
@@ -124,6 +128,7 @@ export const authMiddleware = async (
       return respondError(400, 'Invalid body')
     }
 
+    // Validate nonce and signature, and increment nonce.
     await validateBodyAndIncrementNonceOrThrowResponse(env, parsedBody)
 
     // If all is valid, add parsed body to request and do not return to allow
@@ -137,4 +142,92 @@ export const authMiddleware = async (
     // Rethrow err to be caught by global error handler.
     throw err
   }
+}
+
+// Validate member of the DAO.
+export const authDaoMemberMiddleware = async (
+  request: AuthorizedRequest
+): Promise<Response | void> => {
+  const address = secp256k1PublicKeyToBech32Address(
+    request.parsedBody.data.auth.publicKey,
+    request.parsedBody.data.auth.chainBech32Prefix
+  )
+
+  try {
+    const isMember = await isWalletMemberOfDaoAtBlockHeight(
+      request.parsedBody.data.auth.chainId,
+      request.dao,
+      address
+    )
+
+    if (!isMember) {
+      return respondError(401, 'Unauthorized. Not a member of the DAO.')
+    }
+  } catch (err) {
+    // If known error, respond.
+    if (
+      err instanceof Error &&
+      (err.message.includes('Error parsing into type') ||
+        err.message.includes('contract not found'))
+    ) {
+      return respondError(400, 'Invalid DAO.')
+    }
+
+    console.error(
+      `Error querying DAO ${request.dao} for voting power of ${address}.`,
+      err
+    )
+    // Rethrow error to be caught by global error handler.
+    throw err
+  }
+
+  // If all is valid, do not return anything to allow continuing.
+}
+
+// Validate member of the DAO at the survey creation blockHeight.
+export const authDaoMemberAtSurveyCreationBlockHeightMiddleware = async (
+  request: AuthorizedRequest
+): Promise<Response | void> => {
+  if (!request.activeSurvey) {
+    return respondError(400, 'There is no active survey.')
+  }
+
+  const address = secp256k1PublicKeyToBech32Address(
+    request.parsedBody.data.auth.publicKey,
+    request.parsedBody.data.auth.chainBech32Prefix
+  )
+
+  try {
+    const isMember = await isWalletMemberOfDaoAtBlockHeight(
+      request.parsedBody.data.auth.chainId,
+      request.dao,
+      address,
+      request.activeSurvey.createdAtBlockHeight
+    )
+
+    if (!isMember) {
+      return respondError(
+        401,
+        `Unauthorized. Not a member of the DAO at block height ${request.activeSurvey.createdAtBlockHeight}.`
+      )
+    }
+  } catch (err) {
+    // If known error, respond.
+    if (
+      err instanceof Error &&
+      (err.message.includes('Error parsing into type') ||
+        err.message.includes('contract not found'))
+    ) {
+      return respondError(400, 'Invalid DAO.')
+    }
+
+    console.error(
+      `Error querying DAO ${request.dao} for voting power of ${address} at block height ${request.activeSurvey.createdAtBlockHeight}.`,
+      err
+    )
+    // Rethrow error to be caught by global error handler.
+    throw err
+  }
+
+  // If all is valid, do not return anything to allow continuing.
 }

@@ -1,15 +1,3 @@
-//! Response utilities
-
-export const respond = (status: number, response: Record<string, unknown>) =>
-  new Response(JSON.stringify(response), {
-    status,
-  })
-
-export const respondError = (status: number, error: string) =>
-  respond(status, { error })
-
-//! Data utilities
-
 type Structure = {
   // Nest to match more keys or use an empty object ({}) to check existence.
   [key: string]: Structure | { [key: string | number | symbol]: never }
