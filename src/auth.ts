@@ -168,7 +168,7 @@ export const authDaoMemberMiddleware = async (
     if (
       err instanceof Error &&
       (err.message.includes('Error parsing into type') ||
-        err.message.includes('contract not found'))
+        err.message.includes('not found'))
     ) {
       return respondError(400, 'Invalid DAO.')
     }
@@ -216,7 +216,7 @@ export const authDaoMemberAtSurveyCreationBlockHeightMiddleware = async (
     if (
       err instanceof Error &&
       (err.message.includes('Error parsing into type') ||
-        err.message.includes('contract not found'))
+        err.message.includes('not found'))
     ) {
       return respondError(400, 'Invalid DAO.')
     }
