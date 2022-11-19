@@ -10,7 +10,7 @@ export const handleNonce = async (
 ): Promise<Response> => {
   const publicKey = request.params?.publicKey
   if (!publicKey) {
-    return respondError(400, 'Missing publicKey')
+    return respondError(400, 'Missing publicKey.')
   }
 
   const nonce = await getNonce(env, publicKey)
