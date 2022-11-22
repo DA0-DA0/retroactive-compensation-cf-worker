@@ -1,4 +1,4 @@
-# Initial design spec
+# Design spec
 
 Author: [@NoahSaso](https://github.com/NoahSaso)
 
@@ -165,8 +165,7 @@ Fetch contributions and rankings for the active survey. Any DAO member can do th
 	rankings: {
 		ranker: string
 		contributions: {
-			contributor: string
-			content: string
+			id: string
 			// The position matches the position in the survey's attributes list.
 			attributes: (number | null)[]
 		}[]
