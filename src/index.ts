@@ -11,7 +11,7 @@ import { handleNonce } from './routes/nonce'
 import { respondError } from './utils'
 import { createSurvey } from './routes/createSurvey'
 import { loadActiveSurveyForDao, loadDaoFromParams } from './middleware'
-import { getSurvey } from './routes/getSurvey'
+import { getStatus } from './routes/getStatus'
 import { submitContribution } from './routes/submitContribution'
 import { submitRankings } from './routes/submitRankings'
 import { completeSurvey } from './routes/completeSurvey'
@@ -41,12 +41,12 @@ router.options('*', preflight)
 // Get nonce for publicKey.
 router.get('/nonce/:publicKey', handleNonce)
 
-// Get survey info.
+// Get survey status for wallet.
 router.get(
   '/:dao/:wallet/status',
   loadDaoFromParams,
   loadActiveSurveyForDao,
-  getSurvey
+  getStatus
 )
 // List closed surveys.
 router.get('/:dao/list', loadDaoFromParams, listClosedSurveys)

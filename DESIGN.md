@@ -96,7 +96,7 @@ Retrieve the survey for this DAO, and provide specific context for a wallet.
       }[]
     }[]
   }
-  contributed: boolean
+  contribution: string | null
   ranked: boolean
 }
 ```

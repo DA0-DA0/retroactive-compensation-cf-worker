@@ -1,7 +1,7 @@
 import { AuthorizedRequest, Env } from '../types'
 import { getSurveyJson, respond, respondError } from '../utils'
 
-export const getSurvey = async (
+export const getStatus = async (
   request: AuthorizedRequest,
   env: Env
 ): Promise<Response> => {
@@ -16,15 +16,15 @@ export const getSurvey = async (
     return respondError(404, 'There is no active survey.')
   }
 
-  // Check if user submitted contribution.
-  const walletContributionCount = await env.DB.prepare(
-    'SELECT COUNT(*) FROM contributions WHERE surveyId = ?1 AND contributorPublicKey = ?2'
-  )
-    .bind(activeSurvey.surveyId, wallet)
-    .first<number>('COUNT(*)')
-
-  const contributed =
-    typeof walletContributionCount === 'number' && walletContributionCount > 0
+  // Get user contribution if exists.
+  const contribution =
+    (
+      await env.DB.prepare(
+        'SELECT content FROM contributions WHERE surveyId = ?1 AND contributorPublicKey = ?2'
+      )
+        .bind(activeSurvey.surveyId, wallet)
+        .first<{ content: string } | undefined>()
+    )?.content || null
 
   // Check if user submitted ranking.
   const walletRankingCount = await env.DB.prepare(
@@ -38,7 +38,7 @@ export const getSurvey = async (
 
   return respond(200, {
     survey: getSurveyJson(activeSurvey),
-    contributed,
+    contribution,
     ranked,
   })
 }

@@ -8,7 +8,7 @@ Used template for [Cosmos wallet
 authentication](https://github.com/NoahSaso/cloudflare-worker-cosmos-auth) to
 authenticate requests via a [Cosmos](https://cosmos.network) wallet signature.
 
-Read through the initial design spec [here](./DESIGN.md).
+Read through the design spec [here](./DESIGN.md).
 
 ## Development
 
