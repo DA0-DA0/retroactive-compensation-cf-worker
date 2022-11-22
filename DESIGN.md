@@ -131,7 +131,7 @@ Submit rankings to the active survey. Any DAO member can do this while rankings 
 
 ### `POST /:dao/contributions`
 
-Fetch contributions for the active survey. Any DAO member can do this.
+Fetch contributions for the active survey and this wallet's rankings if submitted already. Any DAO member can do this.
 
 #### Response
 
@@ -143,6 +143,11 @@ Fetch contributions for the active survey. Any DAO member can do this.
     content: string
     createdAt: string
     updatedAt: string
+  }[]
+  rankings: {
+    contributionId: number
+    // The position matches the position in the survey's attributes list.
+    attributes: (number | null)[]
   }[]
 }
 ```
