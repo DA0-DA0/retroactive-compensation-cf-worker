@@ -4,10 +4,10 @@ compatibility_date = "2022-11-16"
 node_compat = true
 
 kv_namespaces = [
-  { binding = "NONCES", id = "6043a64154894eeb915f81a325fb6855", preview_id = "fa01301abf3c49f2bacd1407632b82ef" }
+  { binding = "NONCES", id = "NONCES_ID", preview_id = "NONCES_PREVIEW_ID" }
 ]
 
 [[ d1_databases ]]
 binding = "DB"
 database_name = "DB"
-database_id = "8d08204a-0f10-4853-b567-7b985e5a96dc"
+database_id = "DB_ID"

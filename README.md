@@ -22,43 +22,45 @@ wrangler dev --local --persist
 
 ### Configuration
 
-Create KV namespaces for production and development:
+1. Copy `wrangler.toml.example` to `wrangler.toml`.
+
+2. Create KV namespaces for production and development:
 
 ```sh
 wrangler kv:namespace create NONCES
 wrangler kv:namespace create NONCES --preview
 ```
 
-Add the binding to `wrangler.toml`:
+3. Update the binding IDs in `wrangler.toml`:
 
 ```toml
 kv-namespaces = [
-  { binding = "NONCES", id = "NONCE_ID", preview_id = "NONCE_PREVIEW_ID" }
+  { binding = "NONCES", id = "<INSERT NONCES_ID>", preview_id = "<INSERT NONCES_PREVIEW_ID>" }
 ]
 ```
 
-Create D1 database for production:
+4. Create D1 database for production:
 
 ```sh
 wrangler d1 create DB
 ```
 
-Add the binding to `wrangler.toml`:
+5. Update the binding ID in `wrangler.toml`:
 
 ```toml
 [[ d1_databases ]]
 binding = "DB"
 database_name = "DB"
-database_id = "DB_ID"
+database_id = "<INSERT DB_ID>"
 ```
 
-Seed the database with:
+6. Seed the database with:
 
 ```sh
 wrangler d1 execute DB --file=./schema.sql
 ```
 
-Seed the local database with:
+7. Seed the local database with:
 
 ```sh
 npm run reset-local-db
