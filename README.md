@@ -57,13 +57,15 @@ database_id = "<INSERT DB_ID>"
 6. Seed the database with:
 
 ```sh
+npm run seed
+# OR
 wrangler d1 execute DB --file=./schema.sql
 ```
 
 7. Seed the local database with:
 
 ```sh
-npm run reset-local-db
+npm run seed:local
 # OR
 wrangler d1 execute DB --file=./schema.sql --local
 ```

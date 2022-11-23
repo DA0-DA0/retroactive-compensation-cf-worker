@@ -20,7 +20,8 @@
     "start": "wrangler dev",
     "deploy": "wrangler publish",
     "dev": "wrangler dev --local --persist",
-    "reset-local-db": "wrangler d1 execute DB --local --file=./schema.sql"
+    "seed": "wrangler d1 execute DB --file=./schema.sql",
+    "seed:local": "wrangler d1 execute DB --file=./schema.sql --local"
   },
   "dependencies": {
     "@cosmjs/amino": "^0.29.4",
