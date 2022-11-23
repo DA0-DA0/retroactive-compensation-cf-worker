@@ -16,19 +16,19 @@ It should:
 
 - allow any DAO member to create a survey if one is not already active, specifying:
   - a label for the survey
-  - the date submissions will start being accepted
-  - the date submissions will stop being accepted, and rankings start being accepted
-  - the date rankings will stop being accepted
-  - the attributes that can be ranked for each contributor, and the tokens distributed according to each attribute
-    - (e.g. we may want to rank "financial value produced" separately from "community value produced", and reward financial compensation and voting power compensation differently)
+  - the date contributions will start being accepted
+  - the date contributions will stop being accepted, and ratings start being accepted
+  - the date ratings will stop being accepted
+  - the attributes that can be rated for each contributor, and the tokens distributed according to each attribute
+    - (e.g. we may want to rate "financial value produced" separately from "community value produced", and reward financial compensation and voting power compensation differently)
   - a markdown-formatted description that will be displayed to contributors while submitting
-  - a markdown-formatted description that will be displayed to DF members while ranking
-- allow anyone to submit their contributions to the currently active survey, while submissions are being accepted
-- allow any DAO member to view contribution submissions, while rankings are being accepted
-- allow any DAO member to submit rankings for each contributor that submitted, while rankings are being accepted
-- allow any DAO member to view rankings for the active survey, once they have submitted their rankings OR once rankings stop being accepted
-- allow any DAO member to record the proposal ID of the created proposal, setting the status to complete, once rankings stop being accepted
-- allow any DAO member to view contributions and rankings from past surveys
+  - a markdown-formatted description that will be displayed to DF members while rating
+- allow anyone to submit their contributions to the currently active survey, while contributions are being accepted
+- allow any DAO member to view contribution submissions, while ratings are being accepted
+- allow any DAO member to submit ratings for each contributor that submitted, while ratings are being accepted
+- allow any DAO member to view ratings for the active survey, once they have submitted their ratings OR once ratings stop being accepted
+- allow any DAO member to record the proposal ID of the created proposal, setting the status to complete, once ratings stop being accepted
+- allow any DAO member to view contributions and ratings from past surveys
 
 ## Routes
 
@@ -36,7 +36,7 @@ For brevity, wallet authentication information is omitted in the request bodies 
 
 ### `POST /:dao`
 
-Create a survey for the DAO, if one is not already active (active determined by the `rankingsCloseAt` date being in the future).
+Create a survey for the DAO, if one is not already active (active determined by the `ratingsCloseAt` date being in the future).
 
 #### Request
 
@@ -44,22 +44,25 @@ Create a survey for the DAO, if one is not already active (active determined by 
 {
   survey: {
     name: string
-    submissionsOpenAt: string
-    submissionsCloseRankingsOpenAt: string
-    rankingsCloseAt: string
-    submissionDescription: string
-    rankingDescription: string
+    contributionsOpenAt: string
+    contributionsCloseRatingsOpenAt: string
+    ratingsCloseAt: string
+    contributionInstructions: string
+    ratingInstructions: string
     attributes: {
       name: string
       nativeTokens: {
         denom: string
         amount: string
-      }[]
+      }
+      ;[]
       cw20Tokens: {
         address: string
         amount: string
-      }[]
-    }[]
+      }
+      ;[]
+    }
+    ;[]
   }
 }
 ```
@@ -74,30 +77,33 @@ Retrieve the survey for this DAO, and provide specific context for a wallet.
 {
   survey: {
     status: 'inactive' |
-      'accepting_submissions' |
-      'accepting_rankings' |
+      'accepting_contributions' |
+      'accepting_ratings' |
       'awaiting_completion' |
       'complete'
     name: string
-    submissionsOpenAt: string
-    submissionsCloseRankingsOpenAt: string
-    rankingsCloseAt: string
-    submissionDescription: string
-    rankingDescription: string
+    contributionsOpenAt: string
+    contributionsCloseRatingsOpenAt: string
+    ratingsCloseAt: string
+    contributionInstructions: string
+    ratingInstructions: string
     attributes: {
       name: string
       nativeTokens: {
         denom: string
         amount: string
-      }[]
+      }
+      ;[]
       cw20Tokens: {
         address: string
         amount: string
-      }[]
-    }[]
+      }
+      ;[]
+    }
+    ;[]
   }
   contribution: string | null
-  ranked: boolean
+  rated: boolean
 }
 ```
 
@@ -113,15 +119,15 @@ Submit a contribution to the active survey. Anyone can do this while contributio
 }
 ```
 
-### `POST /:dao/rank`
+### `POST /:dao/rate`
 
-Submit rankings to the active survey. Any DAO member can do this while rankings are being accepted.
+Submit ratings to the active survey. Any DAO member can do this while ratings are being accepted.
 
 #### Request
 
 ```ts
 {
-	rankings: {
+	ratings: {
 		contributionId: number
 		// The position matches the position in the survey's attributes list.
 		attributes: (number | null)[]
@@ -131,7 +137,7 @@ Submit rankings to the active survey. Any DAO member can do this while rankings 
 
 ### `POST /:dao/contributions`
 
-Fetch contributions for the active survey and this wallet's rankings if submitted already. Any DAO member can do this.
+Fetch contributions for the active survey and this wallet's ratings if submitted already. Any DAO member can do this.
 
 #### Response
 
@@ -144,7 +150,7 @@ Fetch contributions for the active survey and this wallet's rankings if submitte
     createdAt: string
     updatedAt: string
   }[]
-  rankings: {
+  ratings: {
     contributionId: number
     // The position matches the position in the survey's attributes list.
     attributes: (number | null)[]
@@ -152,9 +158,9 @@ Fetch contributions for the active survey and this wallet's rankings if submitte
 }
 ```
 
-### `POST /:dao/rankings`
+### `POST /:dao/ratings`
 
-Fetch contributions and rankings for the active survey. Any DAO member can do this after the ranking period closes.
+Fetch contributions and ratings for the active survey. Any DAO member can do this after the rating period closes.
 
 #### Response
 
@@ -167,8 +173,8 @@ Fetch contributions and rankings for the active survey. Any DAO member can do th
 		createdAt: string
 		updatedAt: string
 	}[]
-	rankings: {
-		ranker: string
+	ratings: {
+		rater: string
 		contributions: {
 			id: number
 			// The position matches the position in the survey's attributes list.
@@ -180,7 +186,7 @@ Fetch contributions and rankings for the active survey. Any DAO member can do th
 
 ### `POST /:dao/complete`
 
-Set the active survey to completed and store the proposal ID for the created proposal. Any DAO member can do this once rankings stop being accepted.
+Set the active survey to completed and store the proposal ID for the created proposal. Any DAO member can do this once ratings stop being accepted.
 
 #### Response
 
@@ -203,7 +209,8 @@ List past surveys. Anyone can do this.
     name: string
     contributionCount: number
     openedAt: string
-  }[]
+  }
+  ;[]
 }
 ```
 
@@ -217,9 +224,9 @@ View specific info for a past survey. Any DAO member can do this.
 {
 	survey: {
 		name: string
-		submissionsOpenAt: string
-		submissionsCloseRankingsOpenAt: string
-		rankingsCloseAt: string
+		contributionsOpenAt: string
+		contributionsCloseRatingsOpenAt: string
+		ratingsCloseAt: string
 		proposalId: string
 		attributes: {
 			name: string
@@ -241,8 +248,8 @@ View specific info for a past survey. Any DAO member can do this.
 			updatedAt: string
 		}[] | undefined
 		// Only present for DAO members.
-		rankings: {
-			ranker: string
+		ratings: {
+			rater: string
 			contributions: {
 				contributor: string
 				content: string
@@ -259,18 +266,18 @@ View specific info for a past survey. Any DAO member can do this.
 ### Survey
 
 hasMany Contribution
-hasMany Ranking
+hasMany Rating
 
 ```ts
 {
   id: number
   dao: string
   name: string
-  submissionsOpenAt: Date
-  submissionsCloseRankingsOpenAt: Date
-  rankingsCloseAt: Date
-  submissionDescription: string
-  rankingDescription: string
+  contributionsOpenAt: Date
+  contributionsCloseRatingsOpenAt: Date
+  ratingsCloseAt: Date
+  contributionInstructions: string
+  ratingInstructions: string
   attributesJson: string
   proposalId: string | NULL
 }
@@ -289,7 +296,7 @@ hasOne Survey
 }
 ```
 
-### Ranking
+### Rating
 
 hasOne Survey
 hasOne Contribution
@@ -300,7 +307,7 @@ hasOne Contribution
   survey: Survey
   contribution: Contribution
   attributeIndex: number
-  rankerPublicKey: string
+  raterPublicKey: string
   value: number
 }
 ```

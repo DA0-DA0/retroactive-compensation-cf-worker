@@ -11,10 +11,10 @@ import { objectMatchesStructure } from '../utils/objectMatchesStructure'
 interface SurveyRequest {
   name: string
   contributionsOpenAt: string
-  contributionsCloseRankingsOpenAt: string
-  rankingsCloseAt: string
-  contributionDescription: string
-  rankingDescription: string
+  contributionsCloseRatingsOpenAt: string
+  ratingsCloseAt: string
+  contributionInstructions: string
+  ratingInstructions: string
   attributes: Attribute[]
 }
 
@@ -33,10 +33,10 @@ export const createSurvey = async (
     !objectMatchesStructure(surveyRequest, {
       name: {},
       contributionsOpenAt: {},
-      contributionsCloseRankingsOpenAt: {},
-      rankingsCloseAt: {},
-      contributionDescription: {},
-      rankingDescription: {},
+      contributionsCloseRatingsOpenAt: {},
+      ratingsCloseAt: {},
+      contributionInstructions: {},
+      ratingInstructions: {},
       attributes: {},
     }) ||
     !Array.isArray(surveyRequest.attributes) ||
@@ -78,16 +78,16 @@ export const createSurvey = async (
   // Make survey.
   const timestamp = new Date().toISOString()
   const surveyRow = await env.DB.prepare(
-    'INSERT INTO surveys (dao, name, contributionsOpenAt, contributionsCloseRankingsOpenAt, rankingsCloseAt, contributionDescription, rankingDescription, attributesJson, createdAtBlockHeight, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11) RETURNING *'
+    'INSERT INTO surveys (dao, name, contributionsOpenAt, contributionsCloseRatingsOpenAt, ratingsCloseAt, contributionInstructions, ratingInstructions, attributesJson, createdAtBlockHeight, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11) RETURNING *'
   )
     .bind(
       request.dao,
       surveyRequest.name,
       surveyRequest.contributionsOpenAt,
-      surveyRequest.contributionsCloseRankingsOpenAt,
-      surveyRequest.rankingsCloseAt,
-      surveyRequest.contributionDescription,
-      surveyRequest.rankingDescription,
+      surveyRequest.contributionsCloseRatingsOpenAt,
+      surveyRequest.ratingsCloseAt,
+      surveyRequest.contributionInstructions,
+      surveyRequest.ratingInstructions,
       JSON.stringify(
         // Explicitly copy over attributes to remove any extra properties.
         surveyRequest.attributes.map(({ name, nativeTokens, cw20Tokens }) => ({

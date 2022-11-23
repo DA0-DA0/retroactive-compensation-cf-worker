@@ -1,5 +1,5 @@
 import groupBy from 'lodash.groupby'
-import { AuthorizedRequest, Env, RankingRow, SurveyStatus } from '../types'
+import { AuthorizedRequest, Env, RatingRow, SurveyStatus } from '../types'
 import {
   getContributions as _getContributions,
   respond,
@@ -25,36 +25,36 @@ export const getContributions = async (
 
   const contributions = await _getContributions(env, activeSurvey.surveyId)
 
-  // Get rankings for ranker.
-  const rankingRows =
+  // Get ratings for rater.
+  const ratingRows =
     (
       await env.DB.prepare(
-        'SELECT contributionId, attributeIndex, ranking FROM rankings WHERE surveyId = ?1 AND rankerPublicKey = ?2'
+        'SELECT contributionId, attributeIndex, rating FROM ratings WHERE surveyId = ?1 AND raterPublicKey = ?2'
       )
         .bind(activeSurvey.surveyId, request.parsedBody.data.auth.publicKey)
-        .all<Omit<RankingRow, 'rankerPublicKey'>>()
+        .all<Omit<RatingRow, 'raterPublicKey'>>()
     ).results ?? []
 
-  // Group rankings by contribution. Each group should match the number of
+  // Group ratings by contribution. Each group should match the number of
   // survey attributes.
-  const contributionGroupedRankingRows = groupBy(
-    rankingRows,
+  const contributionGroupedRatingRows = groupBy(
+    ratingRows,
     (row) => row.contributionId
   )
 
-  const rankings = Object.entries(contributionGroupedRankingRows).map(
-    ([contributionId, contributionRankingRows]) => ({
+  const ratings = Object.entries(contributionGroupedRatingRows).map(
+    ([contributionId, contributionRatingRows]) => ({
       contributionId: parseInt(contributionId, 10),
-      attributes: contributionRankingRows
+      attributes: contributionRatingRows
         // Match order of survey attributes in case the query returned out of
         // order or any operations changed the order, which they shouldn't.
         .sort((a, b) => a.attributeIndex - b.attributeIndex)
-        .map((row) => row.ranking),
+        .map((row) => row.rating),
     })
   )
 
   return respond(200, {
     contributions,
-    rankings,
+    ratings,
   })
 }

@@ -13,10 +13,10 @@ import { createSurvey } from './routes/createSurvey'
 import { loadActiveSurveyForDao, loadDaoFromParams } from './middleware'
 import { getStatus } from './routes/getStatus'
 import { submitContribution } from './routes/submitContribution'
-import { submitRankings } from './routes/submitRankings'
+import { submitRatings } from './routes/submitRatings'
 import { completeSurvey } from './routes/completeSurvey'
 import { getContributions } from './routes/getContributions'
-import { getRankings } from './routes/getRankings'
+import { getRatings } from './routes/getRatings'
 import { listClosedSurveys } from './routes/listClosedSurveys'
 import { getClosedSurvey } from './routes/getClosedSurvey'
 
@@ -72,13 +72,13 @@ router.post(
   loadActiveSurveyForDao,
   submitContribution
 )
-// Submit rankings.
+// Submit ratings.
 router.post(
-  '/:dao/rank',
+  '/:dao/rate',
   loadDaoFromParams,
   loadActiveSurveyForDao,
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
-  submitRankings
+  submitRatings
 )
 // Complete survey.
 router.post(
@@ -99,13 +99,13 @@ router.post(
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
   getContributions
 )
-// Get rankings.
+// Get ratings.
 router.post(
-  '/:dao/rankings',
+  '/:dao/ratings',
   loadDaoFromParams,
   loadActiveSurveyForDao,
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
-  getRankings
+  getRatings
 )
 // Get closed survey. Authenticates manually.
 router.post('/:dao/view/:surveyId', loadDaoFromParams, getClosedSurvey)

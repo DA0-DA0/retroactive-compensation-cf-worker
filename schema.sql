@@ -6,10 +6,10 @@ CREATE TABLE surveys (
   dao TEXT NOT NULL,
   name TEXT NOT NULL,
   contributionsOpenAt DATETIME NOT NULL,
-  contributionsCloseRankingsOpenAt DATETIME NOT NULL,
-  rankingsCloseAt DATETIME NOT NULL,
-  contributionDescription TEXT NOT NULL,
-  rankingDescription TEXT NOT NULL,
+  contributionsCloseRatingsOpenAt DATETIME NOT NULL,
+  ratingsCloseAt DATETIME NOT NULL,
+  contributionInstructions TEXT NOT NULL,
+  ratingInstructions TEXT NOT NULL,
   attributesJson TEXT NOT NULL,
   proposalId TEXT,
   createdAtBlockHeight INTEGER NOT NULL,
@@ -31,24 +31,24 @@ CREATE TABLE contributions (
   CONSTRAINT unique_survey_contributor UNIQUE (surveyId, contributorPublicKey)
 );
 
--- Ranking
-DROP TABLE IF EXISTS rankings;
+-- Rating
+DROP TABLE IF EXISTS ratings;
 
-CREATE TABLE rankings (
-  rankingId INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE ratings (
+  ratingId INTEGER PRIMARY KEY AUTOINCREMENT,
   surveyId INTEGER NOT NULL,
   contributionId INTEGER NOT NULL,
   attributeIndex INTEGER NOT NULL,
-  rankerPublicKey TEXT NOT NULL,
-  ranking INTEGER,
+  raterPublicKey TEXT NOT NULL,
+  rating INTEGER,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,
   CONSTRAINT fk_surveys FOREIGN KEY (surveyId) REFERENCES surveys (surveyId),
   CONSTRAINT fk_contributions FOREIGN KEY (contributionId) REFERENCES contributions (contributionId),
-  CONSTRAINT unique_survey_contribution_ranker_attribute UNIQUE (
+  CONSTRAINT unique_survey_contribution_rater_attribute UNIQUE (
     surveyId,
     contributionId,
     attributeIndex,
-    rankerPublicKey
+    raterPublicKey
   )
 );

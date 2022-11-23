@@ -26,19 +26,18 @@ export const getStatus = async (
         .first<{ content: string } | undefined>()
     )?.content || null
 
-  // Check if user submitted ranking.
-  const walletRankingCount = await env.DB.prepare(
-    'SELECT COUNT(*) FROM rankings WHERE surveyId = ?1 AND rankerPublicKey = ?2'
+  // Check if user submitted rating.
+  const walletRatingCount = await env.DB.prepare(
+    'SELECT COUNT(*) FROM ratings WHERE surveyId = ?1 AND raterPublicKey = ?2'
   )
     .bind(activeSurvey.surveyId, wallet)
     .first<number>('COUNT(*)')
 
-  const ranked =
-    typeof walletRankingCount === 'number' && walletRankingCount > 0
+  const rated = typeof walletRatingCount === 'number' && walletRatingCount > 0
 
   return respond(200, {
     survey: getSurveyJson(activeSurvey),
     contribution,
-    ranked,
+    rated,
   })
 }

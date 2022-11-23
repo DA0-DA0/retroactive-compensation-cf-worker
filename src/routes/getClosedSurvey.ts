@@ -3,14 +3,14 @@ import {
   AuthorizedRequest,
   Contribution,
   Env,
-  Ranking,
+  Rating,
   SurveyJson,
   SurveyRow,
   SurveyStatus,
 } from '../types'
 import {
   getContributions,
-  getRankings,
+  getRatings,
   getSurveyJson,
   isWalletMemberOfDaoAtBlockHeight,
   respond,
@@ -20,7 +20,7 @@ import {
 
 interface ClosedSurvey extends SurveyJson {
   contributions: Contribution[] | undefined
-  rankings: Ranking[] | undefined
+  ratings: Rating[] | undefined
 }
 
 export const getClosedSurvey = async (
@@ -71,8 +71,8 @@ export const getClosedSurvey = async (
     contributions: isMemberOfDaoAtSurveyBlockHeight
       ? await getContributions(env, surveyId)
       : undefined,
-    rankings: isMemberOfDaoAtSurveyBlockHeight
-      ? await getRankings(env, surveyId)
+    ratings: isMemberOfDaoAtSurveyBlockHeight
+      ? await getRatings(env, surveyId)
       : undefined,
   }
 

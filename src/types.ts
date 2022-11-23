@@ -38,10 +38,10 @@ export interface SurveyRow {
   dao: string
   name: string
   contributionsOpenAt: string
-  contributionsCloseRankingsOpenAt: string
-  rankingsCloseAt: string
-  contributionDescription: string
-  rankingDescription: string
+  contributionsCloseRatingsOpenAt: string
+  ratingsCloseAt: string
+  contributionInstructions: string
+  ratingInstructions: string
   attributesJson: string
   proposalId: string | null
   createdAtBlockHeight: number
@@ -59,17 +59,17 @@ export type SurveyJson = Pick<
   | 'status'
   | 'name'
   | 'contributionsOpenAt'
-  | 'contributionsCloseRankingsOpenAt'
-  | 'rankingsCloseAt'
-  | 'contributionDescription'
-  | 'rankingDescription'
+  | 'contributionsCloseRatingsOpenAt'
+  | 'ratingsCloseAt'
+  | 'contributionInstructions'
+  | 'ratingInstructions'
   | 'attributes'
 >
 
 export enum SurveyStatus {
   Inactive = 'inactive',
   AcceptingContributions = 'accepting_contributions',
-  AcceptingRankings = 'accepting_rankings',
+  AcceptingRatings = 'accepting_ratings',
   AwaitingCompletion = 'awaiting_completion',
   Complete = 'complete',
 }
@@ -102,15 +102,15 @@ export interface Contribution {
   updatedAt: string
 }
 
-export interface RankingRow {
+export interface RatingRow {
   contributionId: number
   attributeIndex: number
-  rankerPublicKey: string
-  ranking: number | null
+  raterPublicKey: string
+  rating: number | null
 }
 
-export interface Ranking {
-  ranker: string
+export interface Rating {
+  rater: string
   contributions: {
     id: number
     attributes: (number | null)[]
