@@ -23,7 +23,7 @@ interface ClosedSurvey extends SurveyJson {
   ratings: Rating[] | undefined
 }
 
-export const getClosedSurvey = async (
+export const getCompletedSurvey = async (
   request: AuthorizedRequest,
   env: Env
 ): Promise<Response> => {

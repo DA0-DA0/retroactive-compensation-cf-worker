@@ -17,8 +17,8 @@ import { submitRatings } from './routes/submitRatings'
 import { completeSurvey } from './routes/completeSurvey'
 import { getContributions } from './routes/getContributions'
 import { getRatings } from './routes/getRatings'
-import { listClosedSurveys } from './routes/listClosedSurveys'
-import { getClosedSurvey } from './routes/getClosedSurvey'
+import { listCompletedSurveys } from './routes/listCompletedSurveys'
+import { getCompletedSurvey } from './routes/getCompletedSurvey'
 
 // Create CORS handlers.
 const { preflight, corsify } = createCors({
@@ -48,8 +48,8 @@ router.get(
   loadActiveSurveyForDao,
   getStatus
 )
-// List closed surveys.
-router.get('/:dao/list', loadDaoFromParams, listClosedSurveys)
+// List completed surveys.
+router.get('/:dao/list', loadDaoFromParams, listCompletedSurveys)
 
 //! Authenticated routes.
 // Authenticate the following routes.
@@ -108,7 +108,7 @@ router.post(
   getRatings
 )
 // Get closed survey. Authenticates manually.
-router.post('/:dao/view/:surveyId', loadDaoFromParams, getClosedSurvey)
+router.post('/:dao/view/:surveyId', loadDaoFromParams, getCompletedSurvey)
 
 //! 404
 router.all('*', () => respondError(404, 'Not found'))
