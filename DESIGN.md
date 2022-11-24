@@ -221,6 +221,8 @@ View specific info for a completed survey. Any DAO member can do this.
     contributionsOpenAt: string
     contributionsCloseRatingsOpenAt: string
     ratingsCloseAt: string
+    contributionInstructions: string
+    ratingInstructions: string
     proposalId: string
     attributes: {
       name: string
