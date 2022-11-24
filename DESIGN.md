@@ -202,7 +202,7 @@ List completed surveys. Anyone can do this.
     id: number
     name: string
     contributionCount: number
-    contributionsOpenAt: string
+    contributionsOpenedAt: string
     proposalId: string
   }[]
 }
