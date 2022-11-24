@@ -86,14 +86,6 @@ export interface Attribute {
   }[]
 }
 
-export interface ContributionRow {
-  contributionId: number
-  contributorPublicKey: string
-  content: string
-  createdAt: string
-  updatedAt: string
-}
-
 export interface Contribution {
   id: number
   contributor: string

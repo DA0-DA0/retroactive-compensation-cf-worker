@@ -54,15 +54,12 @@ Create a survey for the DAO, if one is not already active (active determined by 
       nativeTokens: {
         denom: string
         amount: string
-      }
-      ;[]
+      }[]
       cw20Tokens: {
         address: string
         amount: string
-      }
-      ;[]
-    }
-    ;[]
+      }[]
+    }[]
   }
 }
 ```
@@ -92,15 +89,12 @@ Retrieve the survey for this DAO, and provide specific context for a wallet.
       nativeTokens: {
         denom: string
         amount: string
-      }
-      ;[]
+      }[]
       cw20Tokens: {
         address: string
         amount: string
-      }
-      ;[]
-    }
-    ;[]
+      }[]
+    }[]
   }
   contribution: string | null
   rated: boolean
@@ -208,9 +202,9 @@ List completed surveys. Anyone can do this.
     id: number
     name: string
     contributionCount: number
-    openedAt: string
-  }
-  ;[]
+    contributionsOpenAt: string
+    proposalId: string | null
+  }[]
 }
 ```
 
@@ -239,24 +233,21 @@ View specific info for a completed survey. Any DAO member can do this.
         amount: string
       }[]
     }[]
-    // Only present for DAO members.
     contributions: {
       id: number
       contributor: string
       content: string
       createdAt: string
       updatedAt: string
-    }[] | undefined
-    // Only present for DAO members.
+    }[]
     ratings: {
       rater: string
       contributions: {
-        contributor: string
-        content: string
+        id: number
         // The position matches the position in the survey's attributes list.
         attributes: (number | null)[]
       }[]
-    }[] | undefined
+    }[]
   }
 }
 ```
