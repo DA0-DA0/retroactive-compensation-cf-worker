@@ -13,12 +13,12 @@ export const listCompletedSurveys = async (
   request: AuthorizedRequest,
   env: Env
 ): Promise<Response> => {
-  // Get completed surveys for DAO. Completed meaning the rating period is over.
-  // It may or may not have a proposalId set.
+  // Get completed surveys for DAO. Completed meaning the proposalId has been
+  // set, though it may be an empty string.
   const surveys =
     (
       await env.DB.prepare(
-        "SELECT surveyId AS id, name, (SELECT COUNT(*) FROM contributions WHERE contributions.surveyId = surveys.surveyId) as contributionCount, contributionsOpenAt, proposalId FROM surveys WHERE dao = ?1 AND ratingsCloseAt <= DATETIME('now') ORDER BY ratingsCloseAt DESC"
+        'SELECT surveyId AS id, name, (SELECT COUNT(*) FROM contributions WHERE contributions.surveyId = surveys.surveyId) as contributionCount, contributionsOpenAt, proposalId FROM surveys WHERE dao = ?1 AND proposalId IS NOT NULL ORDER BY ratingsCloseAt DESC'
       )
         .bind(request.dao)
         .all<CompletedSurveyRow>()
