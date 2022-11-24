@@ -107,7 +107,7 @@ router.post(
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
   getRatings
 )
-// Get closed survey. Authenticates manually.
+// Get completed survey. Authenticates manually.
 router.post('/:dao/view/:surveyId', loadDaoFromParams, getCompletedSurvey)
 
 //! 404

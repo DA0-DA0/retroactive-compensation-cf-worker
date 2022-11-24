@@ -76,6 +76,7 @@ Retrieve the survey for this DAO, and provide specific context for a wallet.
 ```ts
 {
   survey: {
+    id: number
     status: 'inactive' |
       'accepting_contributions' |
       'accepting_ratings' |
@@ -127,11 +128,11 @@ Submit ratings to the active survey. Any DAO member can do this while ratings ar
 
 ```ts
 {
-	ratings: {
-		contributionId: number
-		// The position matches the position in the survey's attributes list.
-		attributes: (number | null)[]
-	}[]
+  ratings: {
+    contributionId: number
+    // The position matches the position in the survey's attributes list.
+    attributes: (number | null)[]
+  }[]
 }
 ```
 
@@ -166,21 +167,21 @@ Fetch contributions and ratings for the active survey. Any DAO member can do thi
 
 ```ts
 {
-	contributions: {
-		id: number
-		contributor: string
-		content: string
-		createdAt: string
-		updatedAt: string
-	}[]
-	ratings: {
-		rater: string
-		contributions: {
-			id: number
-			// The position matches the position in the survey's attributes list.
-			attributes: (number | null)[]
-		}[]
-	}[]
+  contributions: {
+    id: number
+    contributor: string
+    content: string
+    createdAt: string
+    updatedAt: string
+  }[]
+  ratings: {
+    rater: string
+    contributions: {
+      id: number
+      // The position matches the position in the survey's attributes list.
+      attributes: (number | null)[]
+    }[]
+  }[]
 }
 ```
 
@@ -198,7 +199,7 @@ Set the active survey to completed and store the proposal ID for the created pro
 
 ### `GET /:dao/list`
 
-List past surveys. Anyone can do this.
+List completed surveys. Anyone can do this.
 
 #### Response
 
@@ -216,48 +217,49 @@ List past surveys. Anyone can do this.
 
 ### `POST /:dao/view/:surveyId`
 
-View specific info for a past survey. Any DAO member can do this.
+View specific info for a completed survey. Any DAO member can do this.
 
 #### Response
 
 ```ts
 {
-	survey: {
-		name: string
-		contributionsOpenAt: string
-		contributionsCloseRatingsOpenAt: string
-		ratingsCloseAt: string
-		proposalId: string
-		attributes: {
-			name: string
-			nativeTokens: {
-				denom: string
-				amount: string
-			}[]
-			cw20Tokens: {
-				address: string
-				amount: string
-			}[]
-		}[]
-		// Only present for DAO members.
-		contributions: {
-			id: number
-			contributor: string
-			content: string
-			createdAt: string
-			updatedAt: string
-		}[] | undefined
-		// Only present for DAO members.
-		ratings: {
-			rater: string
-			contributions: {
-				contributor: string
-				content: string
-				// The position matches the position in the survey's attributes list.
-				attributes: (number | null)[]
-			}[]
-		}[] | undefined
-	}
+  survey: {
+    id: number
+    name: string
+    contributionsOpenAt: string
+    contributionsCloseRatingsOpenAt: string
+    ratingsCloseAt: string
+    proposalId: string
+    attributes: {
+      name: string
+      nativeTokens: {
+        denom: string
+        amount: string
+      }[]
+      cw20Tokens: {
+        address: string
+        amount: string
+      }[]
+    }[]
+    // Only present for DAO members.
+    contributions: {
+      id: number
+      contributor: string
+      content: string
+      createdAt: string
+      updatedAt: string
+    }[] | undefined
+    // Only present for DAO members.
+    ratings: {
+      rater: string
+      contributions: {
+        contributor: string
+        content: string
+        // The position matches the position in the survey's attributes list.
+        attributes: (number | null)[]
+      }[]
+    }[] | undefined
+  }
 }
 ```
 

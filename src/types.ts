@@ -54,7 +54,7 @@ export interface Survey extends SurveyRow {
   attributes: Attribute[]
 }
 
-export type SurveyJson = Pick<
+export type SurveyJson = { id: number } & Pick<
   Survey,
   | 'status'
   | 'name'

@@ -12,9 +12,9 @@ export const listCompletedSurveys = async (
   request: AuthorizedRequest,
   env: Env
 ): Promise<Response> => {
-  // Get closed surveys for DAO. Completed meaning the rating period is over. It
+  // Get completed surveys for DAO. Completed meaning the rating period is over. It
   // may or may not have a proposalId set.
-  const closedSurveys =
+  const completedSurveys =
     (
       await env.DB.prepare(
         "SELECT surveyId, name, (SELECT COUNT(*) FROM contributions WHERE contributions.surveyId = surveys.surveyId) as contributionCount, contributionsOpenAt FROM surveys WHERE dao = ?1 AND ratingsCloseAt <= DATETIME('now') ORDER BY ratingsCloseAt DESC"
@@ -23,7 +23,7 @@ export const listCompletedSurveys = async (
         .all<CompletedSurveyRow>()
     ).results ?? []
 
-  const surveys = closedSurveys.map(
+  const surveys = completedSurveys.map(
     ({ surveyId, name, contributionCount, contributionsOpenAt }) => ({
       id: surveyId,
       name,

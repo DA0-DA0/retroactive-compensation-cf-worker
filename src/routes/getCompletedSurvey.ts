@@ -18,7 +18,7 @@ import {
   surveyForRow,
 } from '../utils'
 
-interface ClosedSurvey extends SurveyJson {
+interface CompletedSurvey extends SurveyJson {
   contributions: Contribution[] | undefined
   ratings: Rating[] | undefined
 }
@@ -58,15 +58,15 @@ export const getCompletedSurvey = async (
       survey.createdAtBlockHeight
     )
 
-  // Ensure survey is closed.
+  // Ensure survey is completed.
   if (
     survey.status !== SurveyStatus.AwaitingCompletion &&
     survey.status !== SurveyStatus.Complete
   ) {
-    return respondError(400, 'Survey is not closed.')
+    return respondError(400, 'Survey is not completed.')
   }
 
-  const closedSurvey: ClosedSurvey = {
+  const completedSurvey: CompletedSurvey = {
     ...getSurveyJson(survey),
     contributions: isMemberOfDaoAtSurveyBlockHeight
       ? await getContributions(env, surveyId)
@@ -77,6 +77,6 @@ export const getCompletedSurvey = async (
   }
 
   return respond(200, {
-    survey: closedSurvey,
+    survey: completedSurvey,
   })
 }
