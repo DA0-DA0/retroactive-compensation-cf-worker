@@ -76,7 +76,6 @@ Retrieve the survey for this DAO, and provide specific context for a wallet.
 ```ts
 {
   survey: {
-    id: number
     status: 'inactive' |
       'accepting_contributions' |
       'accepting_ratings' |
@@ -224,7 +223,6 @@ View specific info for a completed survey. Any DAO member can do this.
 ```ts
 {
   survey: {
-    id: number
     name: string
     contributionsOpenAt: string
     contributionsCloseRatingsOpenAt: string
@@ -272,7 +270,7 @@ hasMany Rating
 
 ```ts
 {
-  id: number
+  surveyId: number
   dao: string
   name: string
   contributionsOpenAt: Date
@@ -282,6 +280,7 @@ hasMany Rating
   ratingInstructions: string
   attributesJson: string
   proposalId: string | NULL
+  createdAtBlockHeight: number | null
 }
 ```
 
@@ -291,8 +290,8 @@ hasOne Survey
 
 ```ts
 {
-  id: number
-  survey: Survey
+  contributionId: number
+  surveyId: number
   contributorPublicKey: string
   content: string
 }
@@ -305,11 +304,11 @@ hasOne Contribution
 
 ```ts
 {
-  id: number
-  survey: Survey
-  contribution: Contribution
+  ratingId: number
+  surveyId: number
+  contributionId: number
   attributeIndex: number
   raterPublicKey: string
-  value: number
+  rating: number
 }
 ```

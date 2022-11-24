@@ -46,7 +46,6 @@ export const getActiveSurvey = async (
 }
 
 export const getSurveyJson = ({
-  surveyId,
   status,
   name,
   contributionsOpenAt,
@@ -56,7 +55,6 @@ export const getSurveyJson = ({
   ratingInstructions,
   attributes,
 }: Survey): SurveyJson => ({
-  id: surveyId,
   status,
   name,
   contributionsOpenAt,
