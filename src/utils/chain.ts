@@ -2,6 +2,7 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 export const RPC_FOR_CHAIN_ID: Record<string, string | undefined> = {
   'juno-1': 'https://rpc.juno.strange.love:443',
+  'uni-5': 'https://rpc.uni.juno.deuslabs.fi:443',
 }
 
 export const getCosmWasmClientForChain = async (
