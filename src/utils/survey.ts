@@ -1,13 +1,20 @@
 import { Env, Survey, SurveyJson, SurveyRow, SurveyStatus } from '../types'
 
+// Get status for survey.
 export const statusForSurvey = (survey: SurveyRow) => {
-  // Get status for survey.
+  // If proposal ID set, survey is complete.
+  if (survey.proposalId) {
+    return SurveyStatus.Complete
+  }
+
+  // Otherwise, check dates.
   const contributionsOpenAt = new Date(survey.contributionsOpenAt)
   const contributionsCloseRatingsOpenAt = new Date(
     survey.contributionsCloseRatingsOpenAt
   )
   const ratingsCloseAt = new Date(survey.ratingsCloseAt)
   const now = new Date()
+
   const status =
     contributionsOpenAt > now
       ? SurveyStatus.Inactive
@@ -15,9 +22,6 @@ export const statusForSurvey = (survey: SurveyRow) => {
       ? SurveyStatus.AcceptingContributions
       : ratingsCloseAt > now
       ? SurveyStatus.AcceptingRatings
-      : // Complete once proposalId is set.
-      !survey.proposalId
-      ? SurveyStatus.AwaitingCompletion
       : SurveyStatus.Complete
 
   return status
@@ -37,7 +41,7 @@ export const getActiveSurvey = async (
 ): Promise<Survey | undefined> => {
   // Find active survey.
   const activeSurveyRow = await env.DB.prepare(
-    "SELECT * FROM surveys WHERE dao = ?1 AND (ratingsCloseAt > DATETIME('now') OR proposalId IS NULL)"
+    "SELECT * FROM surveys WHERE dao = ?1 AND (ratingsCloseAt > DATETIME('now') AND proposalId IS NULL)"
   )
     .bind(dao)
     .first<SurveyRow | undefined>()
