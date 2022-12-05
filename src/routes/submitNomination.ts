@@ -1,3 +1,4 @@
+import { isValidPublicKey } from '../crypto'
 import { AuthorizedRequest, Env, SurveyStatus } from '../types'
 import { respond, respondError } from '../utils'
 import { objectMatchesStructure } from '../utils/objectMatchesStructure'
@@ -33,6 +34,11 @@ export const submitNomination = async (
     !data.contribution.trim()
   ) {
     return respondError(400, 'Missing contributor or contribution.')
+  }
+
+  // Validate contributor public key.
+  if (!isValidPublicKey(data.contributor)) {
+    return respondError(400, 'Invalid contributor public key.')
   }
 
   // If contribution exists, only allow to update this rater initially nominated
