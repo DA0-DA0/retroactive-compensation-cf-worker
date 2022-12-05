@@ -88,6 +88,7 @@ export interface Attribute {
 
 export interface Contribution {
   id: number
+  nominatedBy: string | null
   contributor: string
   content: string
   createdAt: string

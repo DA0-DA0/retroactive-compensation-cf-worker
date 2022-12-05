@@ -19,6 +19,7 @@ import { getContributions } from './routes/getContributions'
 import { getRatings } from './routes/getRatings'
 import { listCompletedSurveys } from './routes/listCompletedSurveys'
 import { getCompletedSurvey } from './routes/getCompletedSurvey'
+import { submitNomination } from './routes/submitNomination'
 
 // Create CORS handlers.
 const { preflight, corsify } = createCors({
@@ -71,6 +72,14 @@ router.post(
   loadDaoFromParams,
   loadActiveSurveyForDao,
   submitContribution
+)
+// Nominate contribution.
+router.post(
+  '/:dao/nominate',
+  loadDaoFromParams,
+  loadActiveSurveyForDao,
+  authDaoMemberAtSurveyCreationBlockHeightMiddleware,
+  submitNomination
 )
 // Submit ratings.
 router.post(
