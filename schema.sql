@@ -24,6 +24,7 @@ CREATE TABLE contributions (
   contributionId INTEGER PRIMARY KEY AUTOINCREMENT,
   surveyId INTEGER NOT NULL,
   contributorPublicKey TEXT NOT NULL,
+  nominatedByPublicKey TEXT,
   content TEXT NOT NULL,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,

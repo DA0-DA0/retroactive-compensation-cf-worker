@@ -51,3 +51,14 @@ export const verifySecp256k1Signature = async (
 
   return await Secp256k1.verifySignature(signature, messageHash, publicKeyData)
 }
+
+// Returns true if the publicKey appears valid (i.e. proper hex encoding and
+// length).
+export const isValidPublicKey = (publicKey: string): boolean => {
+  try {
+    Secp256k1.uncompressPubkey(fromHex(publicKey))
+    return true
+  } catch {
+    return false
+  }
+}

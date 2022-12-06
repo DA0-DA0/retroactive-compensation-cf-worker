@@ -29,10 +29,13 @@ It should:
 - allow any DAO member to view ratings for the active survey, once they have submitted their ratings OR once ratings stop being accepted
 - allow any DAO member to record the proposal ID of the created proposal, setting the status to complete, once ratings stop being accepted
 - allow any DAO member to view contributions and ratings from past surveys
+- allow any DAO member to nominate contributions during the rating phase, in case someone did not submit a contribution
 
 ## Routes
 
 For brevity, wallet authentication information is omitted in the request bodies below. This template will be used to implement wallet auth: https://github.com/NoahSaso/cloudflare-worker-cosmos-auth
+
+All references to a wallet (i.e. `contributor` and `rater` keys) are public keys. This system is not aware of chain addresses at all, as they are derivations of the public key.
 
 ### `POST /:dao`
 
@@ -113,6 +116,19 @@ Submit a contribution to the active survey. Anyone can do this while contributio
 }
 ```
 
+### `POST /:dao/nominate`
+
+Nominate a contribution to the active survey. Any DAO member can do this while ratings are being accepted.
+
+#### Request
+
+```ts
+{
+  contributor: string
+  contribution: string
+}
+```
+
 ### `POST /:dao/rate`
 
 Submit ratings to the active survey. Any DAO member can do this while ratings are being accepted.
@@ -139,6 +155,7 @@ Fetch contributions for the active survey and this wallet's ratings if submitted
 {
   contributions: {
     id: number
+    nominatedBy: string | null
     contributor: string
     content: string
     createdAt: string
@@ -162,6 +179,7 @@ Fetch contributions and ratings for the active survey. Any DAO member can do thi
 {
   contributions: {
     id: number
+    nominatedBy: string | null
     contributor: string
     content: string
     createdAt: string
@@ -237,6 +255,7 @@ View specific info for a completed survey. Any DAO member can do this.
     }[]
     contributions: {
       id: number
+      nominatedBy: string | null
       contributor: string
       content: string
       createdAt: string
@@ -286,6 +305,7 @@ hasOne Survey
   contributionId: number
   surveyId: number
   contributorPublicKey: string
+  nominatedByPublicKey: string | null
   content: string
 }
 ```
