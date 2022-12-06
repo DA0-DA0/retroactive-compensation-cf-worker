@@ -35,6 +35,8 @@ It should:
 
 For brevity, wallet authentication information is omitted in the request bodies below. This template will be used to implement wallet auth: https://github.com/NoahSaso/cloudflare-worker-cosmos-auth
 
+All references to a wallet (i.e. `contributor` and `rater` keys) are public keys. This system is not aware of chain addresses at all, as they are derivations of the public key.
+
 ### `POST /:dao`
 
 Create a survey for the DAO, if one is not already active (active determined by the `ratingsCloseAt` date being in the future).
