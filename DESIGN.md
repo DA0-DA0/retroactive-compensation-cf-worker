@@ -87,6 +87,7 @@ Retrieve the survey for this DAO, and provide specific context for a wallet.
     ratingsCloseAt: string
     contributionInstructions: string
     ratingInstructions: string
+    createdAtBlockHeight: number
     attributes: {
       name: string
       nativeTokens: {
@@ -242,6 +243,7 @@ View specific info for a completed survey. Any DAO member can do this.
     contributionInstructions: string
     ratingInstructions: string
     proposalId: string
+    createdAtBlockHeight: number
     attributes: {
       name: string
       nativeTokens: {

@@ -58,6 +58,7 @@ export const getSurveyJson = ({
   contributionInstructions,
   ratingInstructions,
   attributes,
+  createdAtBlockHeight,
 }: Survey): SurveyJson => ({
   status,
   name,
@@ -67,4 +68,5 @@ export const getSurveyJson = ({
   contributionInstructions,
   ratingInstructions,
   attributes,
+  createdAtBlockHeight,
 })

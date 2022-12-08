@@ -64,6 +64,7 @@ export type SurveyJson = Pick<
   | 'contributionInstructions'
   | 'ratingInstructions'
   | 'attributes'
+  | 'createdAtBlockHeight'
 >
 
 export enum SurveyStatus {
