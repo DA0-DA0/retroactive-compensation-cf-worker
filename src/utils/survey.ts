@@ -22,7 +22,7 @@ export const statusForSurvey = (survey: SurveyRow) => {
       ? SurveyStatus.AcceptingContributions
       : ratingsCloseAt > now
       ? SurveyStatus.AcceptingRatings
-      : SurveyStatus.Complete
+      : SurveyStatus.AwaitingCompletion
 
   return status
 }
