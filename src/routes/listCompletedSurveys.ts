@@ -7,6 +7,7 @@ interface CompletedSurveyRow {
   contributionCount: number
   contributionsOpenedAt: string
   proposalId: string | null
+  createdAtBlockHeight: number
 }
 
 export const listCompletedSurveys = async (
@@ -18,7 +19,7 @@ export const listCompletedSurveys = async (
   const surveys =
     (
       await env.DB.prepare(
-        'SELECT surveyId AS id, name, (SELECT COUNT(*) FROM contributions WHERE contributions.surveyId = surveys.surveyId) as contributionCount, contributionsOpenAt AS contributionsOpenedAt, proposalId FROM surveys WHERE dao = ?1 AND proposalId IS NOT NULL ORDER BY ratingsCloseAt DESC'
+        'SELECT surveyId AS id, name, (SELECT COUNT(*) FROM contributions WHERE contributions.surveyId = surveys.surveyId) as contributionCount, contributionsOpenAt AS contributionsOpenedAt, proposalId, createdAtBlockHeight FROM surveys WHERE dao = ?1 AND proposalId IS NOT NULL ORDER BY ratingsCloseAt DESC'
       )
         .bind(request.dao)
         .all<CompletedSurveyRow>()
