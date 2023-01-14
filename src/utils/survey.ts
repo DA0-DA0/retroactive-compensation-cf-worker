@@ -33,15 +33,14 @@ export const surveyForRow = (survey: SurveyRow): Survey => ({
   attributes: JSON.parse(survey.attributesJson),
 })
 
-// The active survey has ratings not yet completed or has no proposalId, which
-// means it is incomplete.
+// The active survey has no proposalId, which means it is incomplete.
 export const getActiveSurvey = async (
   env: Env,
   dao: string
 ): Promise<Survey | undefined> => {
   // Find active survey.
   const activeSurveyRow = await env.DB.prepare(
-    "SELECT * FROM surveys WHERE dao = ?1 AND (ratingsCloseAt > DATETIME('now') AND proposalId IS NULL)"
+    'SELECT * FROM surveys WHERE dao = ?1 AND proposalId IS NULL'
   )
     .bind(dao)
     .first<SurveyRow | undefined>()
