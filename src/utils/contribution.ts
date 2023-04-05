@@ -5,6 +5,7 @@ interface ContributionRow {
   nominatedBy: string | null
   contributor: string
   content: string
+  ratingsJson: string | null
   createdAt: string
   updatedAt: string
 }
@@ -13,14 +14,18 @@ export const getContributions = async (
   { DB }: Env,
   surveyId: number
 ): Promise<Contribution[]> => {
-  const contributions =
+  const rows =
     (
       await DB.prepare(
-        'SELECT contributionId AS id, nominatedByPublicKey AS nominatedBy, contributorPublicKey AS contributor, content, createdAt, updatedAt FROM contributions WHERE surveyId = ?1'
+        'SELECT contributionId AS id, nominatedByPublicKey AS nominatedBy, contributorPublicKey AS contributor, content, ratingsJson, createdAt, updatedAt FROM contributions WHERE surveyId = ?1'
       )
         .bind(surveyId)
         .all<ContributionRow>()
     ).results ?? []
 
-  return contributions
+  return rows.map((row) => ({
+    ...row,
+    ratingsJson: undefined,
+    ratings: row.ratingsJson ? JSON.parse(row.ratingsJson) : null,
+  }))
 }

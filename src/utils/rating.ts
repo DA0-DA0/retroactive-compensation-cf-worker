@@ -1,6 +1,9 @@
 import groupBy from 'lodash.groupby'
 import { Env, Rating, RatingRow } from '../types'
 
+export const RATE_MIN = 0
+export const RATE_MAX = 100
+
 export const getRatings = async (
   { DB }: Env,
   surveyId: number

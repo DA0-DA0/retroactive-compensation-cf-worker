@@ -1,5 +1,5 @@
 import { AuthorizedRequest, Env, SurveyStatus } from '../types'
-import { respond, respondError } from '../utils'
+import { RATE_MAX, RATE_MIN, respond, respondError } from '../utils'
 import { objectMatchesStructure } from '../utils/objectMatchesStructure'
 
 interface SubmitRatingsRequest {
@@ -8,9 +8,6 @@ interface SubmitRatingsRequest {
     attributes: (number | null)[]
   }[]
 }
-
-const RATE_MIN = 0
-const RATE_MAX = 100
 
 export const submitRatings = async (
   request: AuthorizedRequest<SubmitRatingsRequest>,
