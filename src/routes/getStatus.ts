@@ -17,14 +17,11 @@ export const getStatus = async (
   }
 
   // Get user contribution if exists.
-  const contribution =
-    (
-      await env.DB.prepare(
-        'SELECT content FROM contributions WHERE surveyId = ?1 AND contributorPublicKey = ?2'
-      )
-        .bind(activeSurvey.surveyId, wallet)
-        .first<{ content: string } | undefined>()
-    )?.content || null
+  const contribution = await env.DB.prepare(
+    'SELECT content, ratingsJson FROM contributions WHERE surveyId = ?1 AND contributorPublicKey = ?2'
+  )
+    .bind(activeSurvey.surveyId, wallet)
+    .first<{ content: string; ratingsJson: string | null } | undefined>()
 
   // Check if user submitted rating.
   const walletRatingCount = await env.DB.prepare(
@@ -37,7 +34,10 @@ export const getStatus = async (
 
   return respond(200, {
     survey: getSurveyJson(activeSurvey),
-    contribution,
+    contribution: contribution?.content || null,
+    contributionSelfRatings: contribution?.ratingsJson
+      ? JSON.parse(contribution.ratingsJson)
+      : null,
     rated,
   })
 }

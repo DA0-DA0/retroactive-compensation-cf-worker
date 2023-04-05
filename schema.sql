@@ -26,6 +26,7 @@ CREATE TABLE contributions (
   contributorPublicKey TEXT NOT NULL,
   nominatedByPublicKey TEXT,
   content TEXT NOT NULL,
+  ratingsJson TEXT,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,
   CONSTRAINT fk_surveys FOREIGN KEY (surveyId) REFERENCES surveys (surveyId),
