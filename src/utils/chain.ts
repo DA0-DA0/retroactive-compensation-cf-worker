@@ -4,6 +4,7 @@ export const RPC_FOR_CHAIN_ID: Record<string, string | undefined> = {
   'juno-1': 'https://juno-rpc.reece.sh:443',
   'uni-6': 'https://rpc.uni.junonetwork.io:443',
   'osmosis-1': 'https://rpc.osmosis.zone:443',
+  'osmo-test-5': 'https://rpc.testnet.osmosis.zone:443',
 }
 
 export const getCosmWasmClientForChain = async (
