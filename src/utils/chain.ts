@@ -1,4 +1,5 @@
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { chains } from 'chain-registry'
 
 export const RPC_FOR_CHAIN_ID: Record<string, string | undefined> = {
   'juno-1': 'https://juno-rpc.reece.sh:443',
@@ -11,15 +12,34 @@ export const RPC_FOR_CHAIN_ID: Record<string, string | undefined> = {
   'migaloo-1': 'https://migaloo-rpc.polkachu.com',
   'narwhal-2': 'https://migaloo-testnet-rpc.polkachu.com',
 }
-
 export const getCosmWasmClientForChain = async (
   chainId: string
 ): Promise<CosmWasmClient> => {
-  const rpc = RPC_FOR_CHAIN_ID[chainId]
-  if (!rpc) {
+  const chain = chains.find((chain) => chain.chain_id === chainId)
+  const rpcs = [
+    RPC_FOR_CHAIN_ID[chainId],
+    ...(chain
+      ? [
+          `https://rpc.cosmos.directory/${chain.chain_name}`,
+          ...(chain.apis?.rpc?.map(({ address }) => address) || []),
+        ]
+      : []),
+  ].filter((rpc): rpc is string => !!rpc)
+  if (!rpcs.length) {
     throw new Error(`No RPC for chain ${chainId}`)
   }
-  return CosmWasmClient.connect(rpc)
+
+  for (const rpc of rpcs) {
+    try {
+      return await CosmWasmClient.connect(rpc)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  throw new Error(
+    `No RPC for chain ${chainId} (tried ${rpcs.length.toLocaleString()})`
+  )
 }
 
 export const isWalletMemberOfDaoAtBlockHeight = async (

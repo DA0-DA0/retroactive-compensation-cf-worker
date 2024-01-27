@@ -28,6 +28,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.29.4",
     "@cosmjs/crypto": "^0.29.4",
     "@cosmjs/encoding": "^0.29.4",
+    "chain-registry": "^1.27.0",
     "crypto-js": "^4.1.1",
     "itty-cors": "^0.3.4",
     "itty-router": "^2.6.6",
