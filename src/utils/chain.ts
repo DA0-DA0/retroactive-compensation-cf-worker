@@ -30,15 +30,15 @@ export const getCosmWasmClientForChain = async (
   )
 }
 
-export const isWalletMemberOfDaoAtBlockHeight = async (
+export const getWalletVotingPowerAtBlockHeight = async (
   chainId: string,
   daoAddress: string,
   walletAddress: string,
   blockHeight?: number
-): Promise<boolean> => {
+): Promise<string> => {
   const client = await getCosmWasmClientForChain(chainId)
 
-  const votingPower = (
+  return (
     await client.queryContractSmart(daoAddress, {
       voting_power_at_height: {
         address: walletAddress,
@@ -46,8 +46,11 @@ export const isWalletMemberOfDaoAtBlockHeight = async (
       },
     })
   ).power
-
-  // If voting power is 0, the address is not a member of the DAO at the given
-  // block height.
-  return votingPower !== '0'
 }
+
+// If address has voting power, it's a member of the DAO at the given block
+// height.
+export const isWalletMemberOfDaoAtBlockHeight = async (
+  ...args: Parameters<typeof getWalletVotingPowerAtBlockHeight>
+): Promise<boolean> =>
+  BigInt(await getWalletVotingPowerAtBlockHeight(...args)) > 0n

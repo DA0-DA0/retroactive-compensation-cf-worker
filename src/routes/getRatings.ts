@@ -27,7 +27,12 @@ export const getRatings = async (
   const contributions = await getContributions(env, activeSurvey.surveyId)
 
   // Get ratings.
-  const ratings = await _getRatings(env, activeSurvey.surveyId)
+  const ratings = await _getRatings(
+    env,
+    request.parsedBody.data.auth.chainId,
+    request.parsedBody.data.auth.chainBech32Prefix,
+    activeSurvey
+  )
 
   return respond(200, {
     contributions,

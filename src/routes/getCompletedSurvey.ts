@@ -72,7 +72,12 @@ export const getCompletedSurvey = async (
       ? await getContributions(env, surveyId)
       : undefined,
     ratings: isMemberOfDaoAtSurveyBlockHeight
-      ? await getRatings(env, surveyId)
+      ? await getRatings(
+          env,
+          request.parsedBody.data.auth.chainId,
+          request.parsedBody.data.auth.chainBech32Prefix,
+          surveyRow
+        )
       : undefined,
   }
 

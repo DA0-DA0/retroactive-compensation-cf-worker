@@ -105,6 +105,7 @@ export interface RatingRow {
 
 export interface Rating {
   rater: string
+  raterVotingPower: string
   contributions: {
     id: number
     attributes: (number | null)[]
