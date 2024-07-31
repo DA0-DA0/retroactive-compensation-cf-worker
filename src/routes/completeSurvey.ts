@@ -35,7 +35,7 @@ export const completeSurvey = async (
   // Update survey.
   const timestamp = new Date().toISOString()
   await env.DB.prepare(
-    'UPDATE surveys SET proposalId = ?1, updatedAt = ?2 WHERE surveyId = ?3'
+    'UPDATE surveys SET proposalId = ?1, updatedAt = ?2 WHERE id = ?3'
   )
     .bind(data.proposalId, timestamp, survey.id)
     .run()

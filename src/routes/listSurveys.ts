@@ -13,7 +13,7 @@ export const listSurveys = async (
   const surveyRows =
     (
       await env.DB.prepare(
-        'SELECT *, (SELECT COUNT(*) FROM contributions WHERE contributions.surveyId = surveyId) as contributionCount FROM surveys WHERE dao = ?1'
+        'SELECT *, (SELECT COUNT(*) FROM contributions WHERE contributions.surveyId = id) as contributionCount FROM surveys WHERE dao = ?1'
       )
         .bind(request.dao)
         .all<SurveyRow>()
