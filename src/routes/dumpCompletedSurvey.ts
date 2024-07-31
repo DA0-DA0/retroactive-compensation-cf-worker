@@ -5,7 +5,6 @@ import {
   Env,
   Rating,
   SurveyJson,
-  SurveyRow,
   SurveyStatus,
 } from '../types'
 import {
@@ -15,7 +14,6 @@ import {
   isWalletMemberOfDaoAtBlockHeight,
   respond,
   respondError,
-  surveyForRow,
 } from '../utils'
 
 interface CompletedSurvey extends SurveyJson {
@@ -23,26 +21,15 @@ interface CompletedSurvey extends SurveyJson {
   ratings: Rating[] | undefined
 }
 
-export const getCompletedSurvey = async (
+export const dumpCompletedSurvey = async (
   request: AuthorizedRequest,
   env: Env
 ): Promise<Response> => {
-  const surveyIdString = request.params?.surveyId
-  const surveyId = parseInt(surveyIdString ?? '', 10)
-  if (!surveyIdString || isNaN(surveyId)) {
-    return respondError(400, 'Missing surveyId.')
-  }
-
-  const surveyRow = await env.DB.prepare(
-    'SELECT * FROM surveys WHERE surveyId = ?1'
-  )
-    .bind(surveyId)
-    .first<SurveyRow | undefined>()
-  if (!surveyRow) {
+  // Get survey.
+  const { survey } = request
+  if (!survey) {
     return respondError(404, 'Survey not found.')
   }
-
-  const survey = surveyForRow(surveyRow)
 
   // Ensure requesting wallet is member of DAO at the survey's creation block
   // height.
@@ -69,14 +56,14 @@ export const getCompletedSurvey = async (
   const completedSurvey: CompletedSurvey = {
     ...getSurveyJson(survey),
     contributions: isMemberOfDaoAtSurveyBlockHeight
-      ? await getContributions(env, surveyId)
+      ? await getContributions(env, survey.id)
       : undefined,
     ratings: isMemberOfDaoAtSurveyBlockHeight
       ? await getRatings(
           env,
           request.parsedBody.data.auth.chainId,
           request.parsedBody.data.auth.chainBech32Prefix,
-          surveyRow
+          survey
         )
       : undefined,
   }

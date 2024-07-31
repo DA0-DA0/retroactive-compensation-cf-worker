@@ -18,7 +18,7 @@ export const getRatings = async (
       await DB.prepare(
         'SELECT contributionId, attributeIndex, raterPublicKey, rating FROM ratings WHERE surveyId = ?1'
       )
-        .bind(survey.surveyId)
+        .bind(survey.id)
         .all<RatingRow>()
     ).results ?? []
 

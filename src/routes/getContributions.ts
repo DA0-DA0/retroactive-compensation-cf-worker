@@ -10,20 +10,21 @@ export const getContributions = async (
   request: AuthorizedRequest,
   env: Env
 ): Promise<Response> => {
-  // Ensure active survey exists.
-  const { activeSurvey } = request
-  if (!activeSurvey) {
-    return respondError(404, 'There is no active survey.')
+  // Get survey.
+  const { survey } = request
+  if (!survey) {
+    return respondError(404, 'Survey not found.')
   }
+
   // Ensure contributions have started being accepted.
-  if (activeSurvey.status === SurveyStatus.Inactive) {
+  if (survey.status === SurveyStatus.Inactive) {
     return respondError(
       400,
       'The contribution submission period has not begun.'
     )
   }
 
-  const contributions = await _getContributions(env, activeSurvey.surveyId)
+  const contributions = await _getContributions(env, survey.id)
 
   // Get ratings for rater.
   const ratingRows =
@@ -31,7 +32,7 @@ export const getContributions = async (
       await env.DB.prepare(
         'SELECT contributionId, attributeIndex, rating FROM ratings WHERE surveyId = ?1 AND raterPublicKey = ?2'
       )
-        .bind(activeSurvey.surveyId, request.parsedBody.data.auth.publicKey)
+        .bind(survey.id, request.parsedBody.data.auth.publicKey)
         .all<Omit<RatingRow, 'raterPublicKey'>>()
     ).results ?? []
 

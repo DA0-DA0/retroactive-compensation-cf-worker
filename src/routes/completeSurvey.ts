@@ -11,18 +11,20 @@ export const completeSurvey = async (
   env: Env
 ): Promise<Response> => {
   const {
-    activeSurvey,
+    survey,
     parsedBody: { data },
   } = request
-  // Get active survey.
-  if (!activeSurvey) {
-    return respondError(400, 'There is no active survey.')
+
+  // Get survey.
+  if (!survey) {
+    return respondError(404, 'Survey not found.')
   }
+
   // Ensure ready to complete.
-  if (activeSurvey.status !== SurveyStatus.AwaitingCompletion) {
+  if (survey.status !== SurveyStatus.AwaitingCompletion) {
     return respondError(
       400,
-      'This survey cannot be completed. Status: ' + activeSurvey.status
+      'This survey cannot be completed. Status: ' + survey.status
     )
   }
 
@@ -35,7 +37,7 @@ export const completeSurvey = async (
   await env.DB.prepare(
     'UPDATE surveys SET proposalId = ?1, updatedAt = ?2 WHERE surveyId = ?3'
   )
-    .bind(data.proposalId, timestamp, activeSurvey.surveyId)
+    .bind(data.proposalId, timestamp, survey.id)
     .run()
 
   return respond(200, { success: true })

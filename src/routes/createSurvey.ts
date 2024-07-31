@@ -22,11 +22,6 @@ export const createSurvey = async (
   request: AuthorizedRequest,
   env: Env
 ): Promise<Response> => {
-  // Check for active survey.
-  if (request.activeSurvey) {
-    return respondError(400, 'There is already an active survey.')
-  }
-
   const surveyRequest = request.parsedBody.data.survey as SurveyRequest
   if (
     // Verify survey matches expected structure.
@@ -78,9 +73,10 @@ export const createSurvey = async (
   // Make survey.
   const timestamp = new Date().toISOString()
   const surveyRow = await env.DB.prepare(
-    'INSERT INTO surveys (dao, name, contributionsOpenAt, contributionsCloseRatingsOpenAt, ratingsCloseAt, contributionInstructions, ratingInstructions, attributesJson, createdAtBlockHeight, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11) RETURNING *'
+    'INSERT INTO surveys (uuid, dao, name, contributionsOpenAt, contributionsCloseRatingsOpenAt, ratingsCloseAt, contributionInstructions, ratingInstructions, attributesJson, createdAtBlockHeight, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12) RETURNING *'
   )
     .bind(
+      crypto.randomUUID(),
       request.dao,
       surveyRequest.name,
       surveyRequest.contributionsOpenAt,
@@ -106,9 +102,19 @@ export const createSurvey = async (
       timestamp,
       timestamp
     )
-    .first<SurveyRow>()
+    .first<Omit<SurveyRow, 'contributionCount'>>()
 
-  const survey = getSurveyJson(surveyForRow(surveyRow))
+  if (!surveyRow) {
+    return respondError(500, 'Failed to create survey.')
+  }
+
+  const survey = getSurveyJson(
+    surveyForRow({
+      ...surveyRow,
+      contributionCount: 0,
+    })
+  )
+
   return respond(200, {
     survey,
   })

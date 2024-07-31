@@ -12,15 +12,15 @@ export const submitContribution = async (
   env: Env
 ): Promise<Response> => {
   const {
-    activeSurvey,
+    survey,
     parsedBody: { data },
   } = request
-  // Get active survey.
-  if (!activeSurvey) {
-    return respondError(400, 'There is no active survey.')
+  // Get survey.
+  if (!survey) {
+    return respondError(404, 'Survey not found.')
   }
   // Ensure contributions are being accepted.
-  if (activeSurvey.status !== SurveyStatus.AcceptingContributions) {
+  if (survey.status !== SurveyStatus.AcceptingContributions) {
     return respondError(400, 'Contributions are not being accepted.')
   }
 
@@ -37,7 +37,7 @@ export const submitContribution = async (
     // Ensure ratings is an array.
     (!Array.isArray(data.ratings) ||
       // Ensure a rating is provided for each attribute.
-      data.ratings.length !== activeSurvey.attributes.length ||
+      data.ratings.length !== survey.attributes.length ||
       // Ensure ratings are null (abstain) or valid numbers.
       data.ratings.some(
         (rating) =>
@@ -59,7 +59,7 @@ export const submitContribution = async (
     'INSERT INTO contributions (surveyId, contributorPublicKey, content, ratingsJson, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?5) ON CONFLICT(surveyId, contributorPublicKey) DO UPDATE SET content = ?3, ratingsJson = ?4, updatedAt = ?5'
   )
     .bind(
-      activeSurvey.surveyId,
+      survey.id,
       data.auth.publicKey,
       data.contribution,
       data.ratings ? JSON.stringify(data.ratings) : null,

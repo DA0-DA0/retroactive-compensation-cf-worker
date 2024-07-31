@@ -2,7 +2,8 @@
 DROP TABLE IF EXISTS surveys;
 
 CREATE TABLE surveys (
-  surveyId INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  uuid TEXT NOT NULL,
   dao TEXT NOT NULL,
   name TEXT NOT NULL,
   contributionsOpenAt DATETIME NOT NULL,
@@ -29,7 +30,7 @@ CREATE TABLE contributions (
   ratingsJson TEXT,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,
-  CONSTRAINT fk_surveys FOREIGN KEY (surveyId) REFERENCES surveys (surveyId),
+  CONSTRAINT fk_surveys FOREIGN KEY (surveyId) REFERENCES surveys (id),
   CONSTRAINT unique_survey_contributor UNIQUE (surveyId, contributorPublicKey)
 );
 
@@ -45,7 +46,7 @@ CREATE TABLE ratings (
   rating INTEGER,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,
-  CONSTRAINT fk_surveys FOREIGN KEY (surveyId) REFERENCES surveys (surveyId),
+  CONSTRAINT fk_surveys FOREIGN KEY (surveyId) REFERENCES surveys (id),
   CONSTRAINT fk_contributions FOREIGN KEY (contributionId) REFERENCES contributions (contributionId),
   CONSTRAINT unique_survey_contribution_rater_attribute UNIQUE (
     surveyId,

@@ -10,16 +10,16 @@ import {
 import { handleNonce } from './routes/nonce'
 import { respondError } from './utils'
 import { createSurvey } from './routes/createSurvey'
-import { loadActiveSurveyForDao, loadDaoFromParams } from './middleware'
+import { loadSurveyByUuidForDao, loadDaoFromParams } from './middleware'
 import { getStatus } from './routes/getStatus'
 import { submitContribution } from './routes/submitContribution'
 import { submitRatings } from './routes/submitRatings'
 import { completeSurvey } from './routes/completeSurvey'
 import { getContributions } from './routes/getContributions'
 import { getRatings } from './routes/getRatings'
-import { listCompletedSurveys } from './routes/listCompletedSurveys'
-import { getCompletedSurvey } from './routes/getCompletedSurvey'
+import { dumpCompletedSurvey } from './routes/dumpCompletedSurvey'
 import { submitNomination } from './routes/submitNomination'
+import { listSurveys } from './routes/listSurveys'
 
 // Create CORS handlers.
 const { preflight, corsify } = createCors({
@@ -44,13 +44,14 @@ router.get('/nonce/:publicKey', handleNonce)
 
 // Get survey status for wallet.
 router.get(
-  '/:dao/:wallet/status',
+  '/:dao/:uuid/:wallet/status',
   loadDaoFromParams,
-  loadActiveSurveyForDao,
+  loadSurveyByUuidForDao,
   getStatus
 )
-// List completed surveys.
-router.get('/:dao/list', loadDaoFromParams, listCompletedSurveys)
+
+// List survey statuses for wallet.
+router.get('/:dao/:wallet/list', loadDaoFromParams, listSurveys)
 
 //! Authenticated routes.
 // Authenticate the following routes.
@@ -60,40 +61,43 @@ router.all('*', authMiddleware)
 
 // Create survey.
 router.post(
-  '/:dao',
+  '/:dao/survey',
   loadDaoFromParams,
   authDaoMemberMiddleware,
-  loadActiveSurveyForDao,
   createSurvey
 )
+
 // Submit contribution.
 router.post(
-  '/:dao/contribution',
+  '/:dao/:uuid/contribution',
   loadDaoFromParams,
-  loadActiveSurveyForDao,
+  loadSurveyByUuidForDao,
   submitContribution
 )
+
 // Nominate contribution.
 router.post(
-  '/:dao/nominate',
+  '/:dao/:uuid/nominate',
   loadDaoFromParams,
-  loadActiveSurveyForDao,
+  loadSurveyByUuidForDao,
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
   submitNomination
 )
+
 // Submit ratings.
 router.post(
-  '/:dao/rate',
+  '/:dao/:uuid/rate',
   loadDaoFromParams,
-  loadActiveSurveyForDao,
+  loadSurveyByUuidForDao,
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
   submitRatings
 )
+
 // Complete survey.
 router.post(
-  '/:dao/complete',
+  '/:dao/:uuid/complete',
   loadDaoFromParams,
-  loadActiveSurveyForDao,
+  loadSurveyByUuidForDao,
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
   completeSurvey
 )
@@ -102,22 +106,29 @@ router.post(
 
 // Get contributions.
 router.post(
-  '/:dao/contributions',
+  '/:dao/:uuid/contributions',
   loadDaoFromParams,
-  loadActiveSurveyForDao,
+  loadSurveyByUuidForDao,
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
   getContributions
 )
+
 // Get ratings.
 router.post(
-  '/:dao/ratings',
+  '/:dao/:uuid/ratings',
   loadDaoFromParams,
-  loadActiveSurveyForDao,
+  loadSurveyByUuidForDao,
   authDaoMemberAtSurveyCreationBlockHeightMiddleware,
   getRatings
 )
+
 // Get completed survey. Authenticates manually.
-router.post('/:dao/view/:surveyId', loadDaoFromParams, getCompletedSurvey)
+router.post(
+  '/:dao/:uuid/dump',
+  loadDaoFromParams,
+  loadSurveyByUuidForDao,
+  dumpCompletedSurvey
+)
 
 //! 404
 router.all('*', () => respondError(404, 'Not found'))

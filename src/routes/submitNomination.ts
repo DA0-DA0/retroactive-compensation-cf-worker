@@ -14,15 +14,15 @@ export const submitNomination = async (
   env: Env
 ): Promise<Response> => {
   const {
-    activeSurvey,
+    survey,
     parsedBody: { data },
   } = request
-  // Get active survey.
-  if (!activeSurvey) {
-    return respondError(400, 'There is no active survey.')
+  // Get survey.
+  if (!survey) {
+    return respondError(404, 'Survey not found.')
   }
   // Ensure ratings (thus nominations) are being accepted.
-  if (activeSurvey.status !== SurveyStatus.AcceptingRatings) {
+  if (survey.status !== SurveyStatus.AcceptingRatings) {
     return respondError(400, 'Nominations are not being accepted.')
   }
 
@@ -43,7 +43,7 @@ export const submitNomination = async (
     // Ensure ratings is an array.
     (!Array.isArray(data.ratings) ||
       // Ensure a rating is provided for each attribute.
-      data.ratings.length !== activeSurvey.attributes.length ||
+      data.ratings.length !== survey.attributes.length ||
       // Ensure ratings are null (abstain) or valid numbers.
       data.ratings.some(
         (rating) =>
@@ -69,7 +69,7 @@ export const submitNomination = async (
   const existingContribution = await env.DB.prepare(
     'SELECT * FROM contributions WHERE surveyId = ?1 AND contributorPublicKey = ?2'
   )
-    .bind(activeSurvey.surveyId, data.contributor)
+    .bind(survey.id, data.contributor)
     .first<{ nominatedByPublicKey: string | null } | undefined>()
   if (
     existingContribution &&
@@ -88,7 +88,7 @@ export const submitNomination = async (
     'INSERT INTO contributions (surveyId, nominatedByPublicKey, contributorPublicKey, content, ratingsJson, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6) ON CONFLICT(surveyId, contributorPublicKey) DO UPDATE SET content = ?4, ratingsJson = ?5, updatedAt = ?6'
   )
     .bind(
-      activeSurvey.surveyId,
+      survey.id,
       data.auth.publicKey,
       data.contributor,
       data.contribution,

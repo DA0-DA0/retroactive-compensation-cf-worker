@@ -24,17 +24,19 @@ export type RequestBody<
   signature: string
 }
 
-export interface AuthorizedRequest<
+export type AuthorizedRequest<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Data extends Record<string, any> = Record<string, any>
-> extends IttyRequest {
+> = IttyRequest & {
   parsedBody: RequestBody<Data>
   dao: string
-  activeSurvey: Survey | undefined
+  uuid: string | undefined
+  survey: Survey | undefined
 }
 
-export interface SurveyRow {
-  surveyId: number
+export type SurveyRow = {
+  id: number
+  uuid: string
   dao: string
   name: string
   contributionsOpenAt: string
@@ -45,17 +47,20 @@ export interface SurveyRow {
   attributesJson: string
   proposalId: string | null
   createdAtBlockHeight: number
+  contributionCount: number
   createdAt: string
   updatedAt: string
 }
 
-export interface Survey extends SurveyRow {
-  status: string
+export type Survey = SurveyRow & {
+  status: SurveyStatus
   attributes: Attribute[]
+  contributionCount: number
 }
 
 export type SurveyJson = Pick<
   Survey,
+  | 'uuid'
   | 'status'
   | 'name'
   | 'contributionsOpenAt'
@@ -64,7 +69,9 @@ export type SurveyJson = Pick<
   | 'contributionInstructions'
   | 'ratingInstructions'
   | 'attributes'
+  | 'proposalId'
   | 'createdAtBlockHeight'
+  | 'contributionCount'
 >
 
 export enum SurveyStatus {
@@ -75,7 +82,7 @@ export enum SurveyStatus {
   Complete = 'complete',
 }
 
-export interface Attribute {
+export type Attribute = {
   name: string
   nativeTokens: {
     denom: string
@@ -87,7 +94,7 @@ export interface Attribute {
   }[]
 }
 
-export interface Contribution {
+export type Contribution = {
   id: number
   nominatedBy: string | null
   contributor: string
@@ -96,18 +103,29 @@ export interface Contribution {
   updatedAt: string
 }
 
-export interface RatingRow {
+export type RatingRow = {
   contributionId: number
   attributeIndex: number
   raterPublicKey: string
   rating: number | null
 }
 
-export interface Rating {
+export type Rating = {
   rater: string
   raterVotingPower: string
   contributions: {
     id: number
     attributes: (number | null)[]
   }[]
+}
+
+/**
+ * Survey with extra metadata about the requesting user's relationship to the
+ * survey.
+ */
+export type SurveyWithMetadata = {
+  survey: SurveyJson
+  contribution: string | null
+  contributionSelfRatings: unknown
+  rated: boolean
 }

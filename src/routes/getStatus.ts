@@ -1,4 +1,4 @@
-import { AuthorizedRequest, Env } from '../types'
+import { SurveyWithMetadata, AuthorizedRequest, Env } from '../types'
 import { getSurveyJson, respond, respondError } from '../utils'
 
 export const getStatus = async (
@@ -10,34 +10,36 @@ export const getStatus = async (
     return respondError(400, 'Missing wallet.')
   }
 
-  // Ensure active survey exists.
-  const { activeSurvey } = request
-  if (!activeSurvey) {
-    return respondError(404, 'There is no active survey.')
+  // Get survey.
+  const { survey } = request
+  if (!survey) {
+    return respondError(404, 'Survey not found.')
   }
 
   // Get user contribution if exists.
   const contribution = await env.DB.prepare(
     'SELECT content, ratingsJson FROM contributions WHERE surveyId = ?1 AND contributorPublicKey = ?2'
   )
-    .bind(activeSurvey.surveyId, wallet)
+    .bind(survey.id, wallet)
     .first<{ content: string; ratingsJson: string | null } | undefined>()
 
   // Check if user submitted rating.
   const walletRatingCount = await env.DB.prepare(
     'SELECT COUNT(*) FROM ratings WHERE surveyId = ?1 AND raterPublicKey = ?2'
   )
-    .bind(activeSurvey.surveyId, wallet)
+    .bind(survey.id, wallet)
     .first<number>('COUNT(*)')
 
   const rated = typeof walletRatingCount === 'number' && walletRatingCount > 0
 
-  return respond(200, {
-    survey: getSurveyJson(activeSurvey),
+  const status: SurveyWithMetadata = {
+    survey: getSurveyJson(survey),
     contribution: contribution?.content || null,
     contributionSelfRatings: contribution?.ratingsJson
       ? JSON.parse(contribution.ratingsJson)
       : null,
     rated,
-  })
+  }
+
+  return respond(200, status)
 }

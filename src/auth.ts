@@ -188,8 +188,8 @@ export const authDaoMemberMiddleware = async (
 export const authDaoMemberAtSurveyCreationBlockHeightMiddleware = async (
   request: AuthorizedRequest
 ): Promise<Response | void> => {
-  if (!request.activeSurvey) {
-    return respondError(400, 'There is no active survey.')
+  if (!request.survey) {
+    return respondError(404, 'Survey not found.')
   }
 
   const address = secp256k1PublicKeyToBech32Address(
@@ -202,13 +202,13 @@ export const authDaoMemberAtSurveyCreationBlockHeightMiddleware = async (
       request.parsedBody.data.auth.chainId,
       request.dao,
       address,
-      request.activeSurvey.createdAtBlockHeight
+      request.survey.createdAtBlockHeight
     )
 
     if (!isMember) {
       return respondError(
         401,
-        `Unauthorized. Not a member of the DAO at block height ${request.activeSurvey.createdAtBlockHeight}.`
+        `Unauthorized. Not a member of the DAO at block height ${request.survey.createdAtBlockHeight}.`
       )
     }
   } catch (err) {
@@ -222,7 +222,7 @@ export const authDaoMemberAtSurveyCreationBlockHeightMiddleware = async (
     }
 
     console.error(
-      `Error querying DAO ${request.dao} for voting power of ${address} at block height ${request.activeSurvey.createdAtBlockHeight}.`,
+      `Error querying DAO ${request.dao} for voting power of ${address} at block height ${request.survey.createdAtBlockHeight}.`,
       err
     )
     // Rethrow error to be caught by global error handler.

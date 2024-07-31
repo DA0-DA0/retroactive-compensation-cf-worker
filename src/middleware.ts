@@ -1,5 +1,5 @@
 import { AuthorizedRequest, Env } from './types'
-import { getActiveSurvey, respondError } from './utils'
+import { getSurvey, respondError } from './utils'
 
 export const loadDaoFromParams = async (
   request: AuthorizedRequest
@@ -13,9 +13,16 @@ export const loadDaoFromParams = async (
   request.dao = dao
 }
 
-export async function loadActiveSurveyForDao(
+export const loadSurveyByUuidForDao = async (
   request: AuthorizedRequest,
   env: Env
-): Promise<Response | void> {
-  request.activeSurvey = await getActiveSurvey(env, request.dao)
+): Promise<Response | void> => {
+  const uuid = request.params?.uuid
+  if (!uuid) {
+    return respondError(400, 'Missing or invalid survey ID.')
+  }
+
+  // Add UUID and survey to request.
+  request.uuid = uuid
+  request.survey = await getSurvey(env, request.dao, uuid)
 }

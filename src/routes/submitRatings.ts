@@ -14,15 +14,15 @@ export const submitRatings = async (
   env: Env
 ): Promise<Response> => {
   const {
-    activeSurvey,
+    survey,
     parsedBody: { data },
   } = request
-  // Get active survey.
-  if (!activeSurvey) {
-    return respondError(400, 'There is no active survey.')
+  // Get survey.
+  if (!survey) {
+    return respondError(404, 'Survey not found.')
   }
   // Ensure ratings are being accepted.
-  if (activeSurvey.status !== SurveyStatus.AcceptingRatings) {
+  if (survey.status !== SurveyStatus.AcceptingRatings) {
     return respondError(400, 'Ratings are not being accepted.')
   }
 
@@ -30,7 +30,7 @@ export const submitRatings = async (
   const contributionCount = await env.DB.prepare(
     'SELECT COUNT(*) FROM contributions WHERE surveyId = ?1'
   )
-    .bind(activeSurvey.surveyId)
+    .bind(survey.id)
     .first<number>('COUNT(*)')
 
   // Validate request.
@@ -47,7 +47,7 @@ export const submitRatings = async (
         }) ||
         !Array.isArray(rating.attributes) ||
         // Ensure a rating is provided for each attribute.
-        rating.attributes.length !== activeSurvey.attributes.length ||
+        rating.attributes.length !== survey.attributes.length ||
         // Ensure ratings are null (abstain) or valid numbers.
         rating.attributes.some(
           (rating) =>
@@ -72,7 +72,7 @@ export const submitRatings = async (
         env.DB.prepare(
           'INSERT INTO ratings (surveyId, contributionId, attributeIndex, raterPublicKey, rating, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) ON CONFLICT(surveyId, contributionId, attributeIndex, raterPublicKey) DO UPDATE SET rating = ?5, updatedAt = ?7'
         ).bind(
-          activeSurvey.surveyId,
+          survey.id,
           contributionId,
           attributeIndex,
           data.auth.publicKey,
