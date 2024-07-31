@@ -27,6 +27,7 @@ CREATE TABLE contributions (
   contributorPublicKey TEXT NOT NULL,
   nominatedByPublicKey TEXT,
   content TEXT NOT NULL,
+  filesJson TEXT,
   ratingsJson TEXT,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL,

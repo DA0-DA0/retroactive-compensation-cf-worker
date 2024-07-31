@@ -99,6 +99,8 @@ export type Contribution = {
   nominatedBy: string | null
   contributor: string
   content: string
+  files: ContributionFile[] | null
+  ratings: (number | null)[] | null
   createdAt: string
   updatedAt: string
 }
@@ -119,13 +121,22 @@ export type Rating = {
   }[]
 }
 
+export type ContributionFile = {
+  name: string
+  url: string
+  mimetype: string
+}
+
 /**
  * Survey with extra metadata about the requesting user's relationship to the
  * survey.
  */
 export type SurveyWithMetadata = {
   survey: SurveyJson
-  contribution: string | null
-  contributionSelfRatings: unknown
+  contribution: {
+    content: string
+    files: ContributionFile[] | null
+    selfRatings: (number | null)[] | null
+  } | null
   rated: boolean
 }

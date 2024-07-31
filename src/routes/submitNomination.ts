@@ -6,6 +6,7 @@ import { objectMatchesStructure } from '../utils/objectMatchesStructure'
 interface SubmitNominationRequest {
   contributor: string
   contribution: string
+  files?: string[] | null
   ratings?: (number | null)[]
 }
 
@@ -59,6 +60,22 @@ export const submitNomination = async (
     return respondError(400, 'Invalid ratings.')
   }
 
+  if (
+    // Validate files if provided.
+    data.files &&
+    // Ensure files is an array.
+    (!Array.isArray(data.files) ||
+      !data.files.every((f) =>
+        objectMatchesStructure(f, {
+          name: {},
+          url: {},
+          mimetype: {},
+        })
+      ))
+  ) {
+    return respondError(400, 'Invalid files.')
+  }
+
   // Validate contributor public key.
   if (!isValidPublicKey(data.contributor)) {
     return respondError(400, 'Invalid contributor public key.')
@@ -85,13 +102,14 @@ export const submitNomination = async (
 
   // Make contribution. Updates if already exists.
   await env.DB.prepare(
-    'INSERT INTO contributions (surveyId, nominatedByPublicKey, contributorPublicKey, content, ratingsJson, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6) ON CONFLICT(surveyId, contributorPublicKey) DO UPDATE SET content = ?4, ratingsJson = ?5, updatedAt = ?6'
+    'INSERT INTO contributions (surveyId, nominatedByPublicKey, contributorPublicKey, content, filesJson, ratingsJson, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7) ON CONFLICT(surveyId, contributorPublicKey) DO UPDATE SET content = ?4, filesJson = ?5, ratingsJson = ?6, updatedAt = ?7'
   )
     .bind(
       survey.id,
       data.auth.publicKey,
       data.contributor,
       data.contribution,
+      data.files ? JSON.stringify(data.files) : null,
       data.ratings ? JSON.stringify(data.ratings) : null,
       new Date().toISOString()
     )

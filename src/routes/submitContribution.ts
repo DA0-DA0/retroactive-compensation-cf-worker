@@ -4,6 +4,7 @@ import { objectMatchesStructure } from '../utils/objectMatchesStructure'
 
 interface SubmitContributionRequest {
   contribution: string
+  files?: string[] | null
   ratings?: (number | null)[]
 }
 
@@ -53,15 +54,32 @@ export const submitContribution = async (
     return respondError(400, 'Invalid ratings.')
   }
 
+  if (
+    // Validate files if provided.
+    data.files &&
+    // Ensure files is an array.
+    (!Array.isArray(data.files) ||
+      !data.files.every((f) =>
+        objectMatchesStructure(f, {
+          name: {},
+          url: {},
+          mimetype: {},
+        })
+      ))
+  ) {
+    return respondError(400, 'Invalid files.')
+  }
+
   // Make contribution. Updates if already exists.
   const timestamp = new Date().toISOString()
   await env.DB.prepare(
-    'INSERT INTO contributions (surveyId, contributorPublicKey, content, ratingsJson, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?5) ON CONFLICT(surveyId, contributorPublicKey) DO UPDATE SET content = ?3, ratingsJson = ?4, updatedAt = ?5'
+    'INSERT INTO contributions (surveyId, contributorPublicKey, content, filesJson, ratingsJson, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6) ON CONFLICT(surveyId, contributorPublicKey) DO UPDATE SET content = ?3, filesJson = ?4, ratingsJson = ?5, updatedAt = ?6'
   )
     .bind(
       survey.id,
       data.auth.publicKey,
       data.contribution,
+      data.files ? JSON.stringify(data.files) : null,
       data.ratings ? JSON.stringify(data.ratings) : null,
       timestamp
     )
