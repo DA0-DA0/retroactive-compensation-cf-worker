@@ -9,8 +9,8 @@ import {
 
 // Get status for survey.
 export const statusForSurvey = (survey: SurveyRow): SurveyStatus => {
-  // If proposal ID set, survey is complete.
-  if (survey.proposalId) {
+  // If proposal ID set (including empty string), survey is complete.
+  if (survey.proposalId !== null) {
     return SurveyStatus.Complete
   }
 
