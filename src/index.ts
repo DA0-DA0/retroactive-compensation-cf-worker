@@ -20,10 +20,11 @@ import { getRatings } from './routes/getRatings'
 import { dumpCompletedSurvey } from './routes/dumpCompletedSurvey'
 import { submitNomination } from './routes/submitNomination'
 import { listSurveys } from './routes/listSurveys'
+import { deleteSurvey } from './routes/deleteSurvey'
 
 // Create CORS handlers.
 const { preflight, corsify } = createCors({
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   origins: ['*'],
   maxAge: 3600,
   headers: {
@@ -65,6 +66,14 @@ router.post(
   loadDaoFromParams,
   authDaoMemberMiddleware,
   createSurvey
+)
+
+// Delete survey.
+router.delete(
+  '/:dao/:uuid',
+  loadDaoFromParams,
+  loadSurveyByUuidForDao,
+  deleteSurvey
 )
 
 // Submit contribution.

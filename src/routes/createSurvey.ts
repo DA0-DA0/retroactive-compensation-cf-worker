@@ -73,11 +73,12 @@ export const createSurvey = async (
   // Make survey.
   const timestamp = new Date().toISOString()
   const surveyRow = await env.DB.prepare(
-    'INSERT INTO surveys (uuid, dao, name, contributionsOpenAt, contributionsCloseRatingsOpenAt, ratingsCloseAt, contributionInstructions, ratingInstructions, attributesJson, createdAtBlockHeight, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12) RETURNING *'
+    'INSERT INTO surveys (uuid, dao, creatorPublicKey, name, contributionsOpenAt, contributionsCloseRatingsOpenAt, ratingsCloseAt, contributionInstructions, ratingInstructions, attributesJson, createdAtBlockHeight, createdAt, updatedAt) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13) RETURNING *'
   )
     .bind(
       crypto.randomUUID(),
       request.dao,
+      request.parsedBody.data.auth.publicKey,
       surveyRequest.name,
       surveyRequest.contributionsOpenAt,
       surveyRequest.contributionsCloseRatingsOpenAt,

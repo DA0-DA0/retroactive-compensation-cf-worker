@@ -6,6 +6,7 @@ CREATE TABLE surveys (
   uuid TEXT NOT NULL,
   dao TEXT NOT NULL,
   name TEXT NOT NULL,
+  creatorPublicKey TEXT NOT NULL,
   contributionsOpenAt DATETIME NOT NULL,
   contributionsCloseRatingsOpenAt DATETIME NOT NULL,
   ratingsCloseAt DATETIME NOT NULL,

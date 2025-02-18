@@ -1,5 +1,5 @@
-export const respond = (status: number, response: Record<string, unknown>) =>
-  new Response(JSON.stringify(response), {
+export const respond = (status: number, response?: Record<string, unknown>) =>
+  new Response(response ? JSON.stringify(response) : null, {
     status,
   })
 

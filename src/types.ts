@@ -39,6 +39,7 @@ export type SurveyRow = {
   uuid: string
   dao: string
   name: string
+  creatorPublicKey: string
   contributionsOpenAt: string
   contributionsCloseRatingsOpenAt: string
   ratingsCloseAt: string
@@ -63,6 +64,7 @@ export type SurveyJson = Pick<
   | 'uuid'
   | 'status'
   | 'name'
+  | 'creatorPublicKey'
   | 'contributionsOpenAt'
   | 'contributionsCloseRatingsOpenAt'
   | 'ratingsCloseAt'
