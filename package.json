@@ -2,18 +2,18 @@
   "name": "retroactive-compensation-cf-worker",
   "version": "0.0.1",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240725.0",
+    "@cloudflare/workers-types": "^4.20250407.0",
     "@types/crypto-js": "^4.1.1",
     "@types/lodash.groupby": "^4.6.7",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.43.0",
-    "better-sqlite3": "^7.6.2",
+    "better-sqlite3": "^11.9.1",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",
     "typescript": "^4.8.4",
-    "wrangler": "^3.67.1"
+    "wrangler": "^4.8.0"
   },
   "private": true,
   "scripts": {
@@ -28,7 +28,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.29.4",
     "@cosmjs/crypto": "^0.29.4",
     "@cosmjs/encoding": "^0.29.4",
-    "chain-registry": "^1.27.0",
+    "chain-registry": "^1.69.176",
     "crypto-js": "^4.1.1",
     "itty-cors": "^0.3.4",
     "itty-router": "^2.6.6",
