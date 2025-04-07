@@ -4,6 +4,11 @@ import { chains } from 'chain-registry'
 export const getCosmWasmClientForChain = async (
   chainId: string
 ): Promise<CosmWasmClient> => {
+  // Temporary fix for new Juno Testnet.
+  if (chainId === 'uni-7') {
+    chainId = 'uni-6'
+  }
+
   const chain = chains.find((chain) => chain.chain_id === chainId)
   const rpcs = (
     chain
